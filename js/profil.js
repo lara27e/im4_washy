@@ -1,18 +1,18 @@
-//const myID = await checkAuth();
-//console.log(myID);
-
 async function loadProfile() {
     try {
         const response = await fetch("api/profil.php", {
             credentials: "include",
-    });
-        const result = await response.text();
-        console.log("Profile data:", result);
+        });
 
-        document.querySelector("vorname").value = result.vorname || "";
-        document.getElementById("nachname").value = result.nachname || "";
+        const result = await response.json();
 
-    }   catch (error) {
+        if (result.status === "success") {
+            document.getElementById("vorname").value = result.vorname || "";
+            document.getElementById("nachname").value = result.nachname || "";
+            document.getElementById("email").value = result.email || "";
+        }
+
+    } catch (error) {
         console.error("Error loading profile:", error);
     }
 }
@@ -26,6 +26,9 @@ document
 
     const vorname = document.getElementById("vorname").value.trim();
     const nachname = document.getElementById("nachname").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const oldPassword = document.getElementById("oldPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
 
     try {
       const response = await fetch("api/profilUpdate.php", {
@@ -33,21 +36,34 @@ document
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({vorname, nachname}),
+        credentials: "include",
+        body: JSON.stringify({
+            vorname,
+            nachname,
+            email,
+            oldPassword,
+            newPassword
+        }),
       });
-      const result = await response.text();
-      console.log("Update response:", result);
-/*
-      if (result.status === "success") {
-        alert("Profil updated successfully!");
-        window.location.href = "login.html";
-      } else {
-        alert(result.message || "Registration failed.");
-      } */
-    } 
 
-       catch (error) {
+      const result = await response.json();
+
+      if (result.status === "success") {
+        alert("Profil erfolgreich aktualisiert!");
+      } else {
+        alert(result.message || "Fehler beim Update.");
+      }
+
+    } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong!");
+      alert("Etwas ist schiefgelaufen.");
     }
-  });
+});
+
+
+const togglePassword = document.getElementById("togglePassword");
+const passwordBox = document.getElementById("passwordBox");
+
+togglePassword.addEventListener("click", function () {
+    passwordBox.classList.toggle("hidden");
+});
