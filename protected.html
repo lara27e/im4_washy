@@ -24,17 +24,115 @@
             </div>
           </div>
         </div>
-        <div class="placeholder-card">Letzte Wäsche: Vor 20 Min.</div>
-      </section>
       
-        <div class="placeholder-card">Letzte Wäsche: Vor 20 Min.</div>
+        <p class="chart-description">
+          <span id="desc-percentage">0</span>% wurden heute richtig die Hände gewaschen.
+        </p>
+      
+        <h2 class="section-title">Live Aktivitäten</h2>
+        
+        <div id="activitiesList" class="activities-container">
+          
+          <div class="activity-item">
+            <div class="activity-icon" style="background-color: #ffd9e9;">✨</div>
+            <div class="activity-info">
+              <p class="activity-fulltext"><strong>Sheryn</strong> hat die Hände korrekt gewaschen</p>
+            </div>
+            <div class="activity-time">gerade eben</div>
+          </div>
+      
+          <div class="activity-item">
+            <div class="activity-icon" style="background-color: #e1f5fe;">🧼</div>
+            <div class="activity-info">
+              <p class="activity-fulltext"><strong>Fabienne</strong> hat die Hände korrekt gewaschen</p>
+            </div>
+            <div class="activity-time">gerade eben</div>
+          </div>
+      
+          <div class="activity-item">
+            <div class="activity-icon" style="background-color: #E8F5E9;">💧</div>
+            <div class="activity-info">
+              <p class="activity-fulltext"><strong>Lara</strong> hat die Hände korrekt gewaschen</p>
+            </div>
+            <div class="activity-time">vor 2min</div>
+          </div>
+      
+          <div class="activity-item">
+            <div class="activity-icon" style="background-color: #f0f4ff;">🫧</div>
+            <div class="activity-info">
+              <p class="activity-fulltext"><strong>Leon</strong> hat die Hände korrekt gewaschen</p>
+            </div>
+            <div class="activity-time">vor 15min</div>
+          </div>
+      
+        </div>
       </section>
       
       <section id="familie" class="tab-content">
         <h1>Meine Familie</h1>
-        <p class="subtitle">Wer hat heute schon gewaschen?</p>
-        <div class="placeholder-card">Mama: 5x ✅</div>
-        <div class="placeholder-card">Papa: 3x ✅</div>
+        <p class="subtitle">Statistiken deiner Liebsten</p>
+      
+        <div id="familyList" class="family-list">
+          <div class="member-card pink">
+            <div class="member-header">
+              <div class="member-avatar"><span class="avatar-emoji">🦄</span></div>
+              <div class="member-meta">
+                <h3 class="member-name">Lena</h3>
+                <p class="member-sub">6 Jahre</p>
+              </div>
+              <div class="edit-btn" onclick="openEditModal(this)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="member-stats">
+              <div class="stat-item"><strong>0/0</strong><p>Heute</p></div>
+              <div class="stat-item"><strong>27</strong><p>Woche</p></div>
+              <div class="stat-item"><strong>4</strong><p>Vergessen</p></div>
+            </div>
+          </div>
+        </div>
+      
+        <button class="add-family-btn" onclick="openAddMemberModal()">
+          <span>+</span> Mitglied hinzufügen
+        </button>
+      
+        <div id="addMemberModal" class="modal-overlay hidden">
+          <div class="modal-content">
+            <h2 id="modalTitle">Neues Mitglied</h2>
+            
+            <div class="input-group">
+              <label>Rolle auswählen</label>
+              <div class="role-selection">
+                <button type="button" class="role-btn selected" onclick="selectRole(this, 'Kind')">Kind</button>
+                <button type="button" class="role-btn" onclick="selectRole(this, 'Erwachsener')">Erwachsener</button>
+              </div>
+              <input type="hidden" id="newMemberAge" value="Kind">
+            </div>
+      
+            <div class="input-group">
+              <label>Alter oder Rolle</label>
+              <input type="text" id="newMemberAge" placeholder="Eingeben (z.B. 5 Jahre)">
+            </div>
+      
+            <p class="selection-label">Tier-Icon auswählen</p>
+            <div class="animal-grid">
+              <div class="animal-option" onclick="selectAnimal(this, '🐢')"><span>🐢</span><p>Schildkröte</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🐬')"><span>🐬</span><p>Delfin</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🦭')"><span>🦭</span><p>Robbe</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🦈')"><span>🦈</span><p>Hai</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🐧')"><span>🐧</span><p>Pinguin</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🐙')"><span>🐙</span><p>Oktopus</p></div>
+            </div>
+      
+            <div class="modal-buttons">
+              <button id="deleteBtn" class="btn-delete hidden" onclick="deleteMember()">Löschen</button>
+              <button class="btn-cancel" onclick="closeAddMemberModal()">Abbrechen</button>
+              <button id="saveBtn" class="btn-save" onclick="saveMember()">Speichern</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="awards" class="tab-content">
@@ -53,7 +151,7 @@
             <p><strong>User-ID:</strong> <span id="userId"></span></p>
         </div>
 
-        <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 15px;">👤 Profil bearbeiten</a>
+        <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 15px;">Profil bearbeiten</a>
         <button id="logoutBtn" class="btn-primary">Abmelden</button>
       </section>
 
