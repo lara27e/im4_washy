@@ -1,21 +1,35 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <title>Protected Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Washy - Dashboard</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <h1>Protected Page</h1>
+    <div class="login-container">
+      <div class="logo">🌊</div>
+      <h1>Dashboard</h1>
+      
+      <div id="protectedContent">
+        <p class="subtitle">Schön, dass du da bist!</p>
+        
+        <div style="background: #f0f4ff; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: left;">
+            <p style="margin: 5px 0; font-size: 14px;"><strong>E-Mail:</strong> <span id="userEmail"></span></p>
+            <p style="margin: 5px 0; font-size: 14px;"><strong>User-ID:</strong> <span id="userId"></span></p>
+        </div>
+      </div>
 
-    <!-- This is where we'll dynamically show the protected content -->
-    <div id="protectedContent">
-      <h2>Welcome, <span id="userEmail"></span>!</h2>
-      <p>Your user ID is: <span id="userId"></span></p>
+      <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 10px;">Profil bearbeiten</a>
+
+      <button id="logoutBtn" class="btn-primary">Abmelden</button>
+      
+      <div class="footer">
+          <p style="font-size: 12px; color: #bbb;">Washy - Sicher & Sauber</p>
+      </div>
     </div>
 
-    <button id="logoutBtn">Logout</button>
-
+    <script src="js/background.js"></script>
     <script src="js/protected.js"></script>
     <script src="js/logout.js"></script>
   </body>

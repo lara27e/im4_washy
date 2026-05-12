@@ -1,5 +1,5 @@
 function createBackgroundDots() {
-    const colors = ['#e8f5e9', '#f0f4ff', '#fff9c4', '#e1f5fe']; // Pastelltöne
+    const colors = ['#e8f5e9', '#f0f4ff', '#ffd9e9', '#e1f5fe']; // Pastelltöne
     const dotCount = 15;
 
     for (let i = 0; i < dotCount; i++) {
