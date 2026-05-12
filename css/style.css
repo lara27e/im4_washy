@@ -71,14 +71,21 @@ body {
   border-radius: 20px;
 }
 
-/* Header & Logo */
 .logo {
-  font-size: 50px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.logo img {
+  max-width: 120px; /* Hier kannst du die Größe deines Logos feinjustieren */
+  height: auto;
+  display: block;
 }
 
 h1 {
-  color: #72aeee; /* Das sanfte Blau aus dem Bild */
+  color: #9ad3ff; /* Das sanfte Blau aus dem Bild */
   font-size: 24px;
   margin-bottom: 5px;
 }
@@ -138,16 +145,16 @@ button:active {
 
 .btn-primary {
   border: none;
-  background: linear-gradient(90deg, #74b9ff, #ffd9e9); /* Blau-Grün Verlauf */
+  background: linear-gradient(90deg, #B4DDFC, #ffd9e9); /* Blau-Grün Verlauf */
   color: white;
   margin-top: 10px;
   margin-bottom: 15px;
 }
 
 .btn-secondary {
-  border: 2px solid #74b9ff;
+  border: 2px solid #B4DDFC;
   background-color: white;
-  color: #74b9ff;
+  color: #9dd5ff;
 }
 
 .footer {
