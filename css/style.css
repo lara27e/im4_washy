@@ -50,13 +50,29 @@ body {
   position: relative;
 }
 
-/* Die Punkte */
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    /* Größere Sprünge für mehr Dynamik */
+    transform: translate(25px, -35px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
 .dot {
   position: absolute;
   border-radius: 50%;
-  z-index: -1; /* Hinter dem Inhalt */
-  opacity: 0.4; /* Leicht transparent wie im Bild */
-  pointer-events: none; /* Man kann nicht draufklicken */
+  z-index: -1;
+  opacity: 0.4;
+  pointer-events: none;
+  animation: float ease-in-out infinite; /* "ease-in-out" macht es flüssiger als "linear" */
 }
 
 /* Der Container muss über den Punkten liegen */
@@ -159,4 +175,163 @@ button:active {
 
 .footer {
   margin-top: 10px;
+}
+
+/* Container für die App-Ansicht */
+.app-container {
+  width: 100%;
+  max-width: 450px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  padding-bottom: 100px; /* Platz für die Navigation unten */
+}
+
+/* Tab-System */
+.tab-content {
+  display: none;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Platzhalter-Karten */
+.placeholder-card, .user-info-box {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid #f0f4ff;
+  color: #777;
+}
+
+.user-info-box {
+  text-align: left;
+  background: #f0f4ff;
+  border: none;
+  color: #555;
+}
+
+/* NAVIGATION UNTEN */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 450px;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0 25px 0; /* Padding unten für iPhone Home-Bar */
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+  z-index: 100;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  color: #D1D1D1; /* Helles Grau für inaktive Icons */
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.nav-icon {
+  width: 24px;   /* Einheitliche Breite */
+  height: 24px;  /* Einheitliche Höhe */
+  margin-bottom: 6px;
+  stroke: currentColor; /* Nutzt die Farbe des übergeordneten .nav-item */
+}
+
+.nav-item.active {
+  color: #B6DDFB; /* Deine Wunschfarbe für das aktive Icon */
+}
+
+.nav-text {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+/* Button Fix für Dashboard */
+.app-container .btn-primary, .app-container .btn-secondary {
+    margin-top: 5px;
+}
+
+/* Kreisdiagramm */
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+}
+
+.circular-progress {
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+
+.circular-progress svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* Startet oben in der Mitte */
+}
+
+.circular-progress circle {
+  fill: none;
+  stroke-width: 8; /* Dicke des Rings */
+  stroke-linecap: round; /* Macht die Enden rund */
+}
+
+.circular-progress circle.bg {
+  stroke: #f0f4ff; /* Sehr helles Blau/Grau für den Pfad */
+}
+
+.circular-progress circle.progress {
+  stroke: #B6DDFB; /* Deine Wunschfarbe */
+  stroke-dasharray: 283; /* Umfang des Kreises (2 * PI * r) */
+  stroke-dashoffset: 283; /* Startet komplett leer */
+  transition: stroke-dashoffset 1s ease-out; /* Schöne Animation beim Laden */
+}
+
+.chart-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline; /* Sorgt dafür, dass das %-Zeichen unten bündig mit der Zahl steht */
+}
+
+.chart-text span#percentageValue {
+  font-size: 58px; /* Noch ein Stück größer, da jetzt Platz ist */
+  font-weight: bold;
+  color: #B6DDFB;
+  line-height: 1;
+}
+
+.chart-text small {
+  font-size: 24px;
+  font-weight: bold;
+  color: #B6DDFB;
+  margin-left: 2px;
 }

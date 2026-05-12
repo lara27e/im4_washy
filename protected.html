@@ -7,30 +7,110 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <div class="login-container">
-      <div class="logo">🌊</div>
-      <h1>Dashboard</h1>
+    <div class="app-container">
       
-      <div id="protectedContent">
-        <p class="subtitle">Schön, dass du da bist!</p>
-        
-        <div style="background: #f0f4ff; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: left;">
-            <p style="margin: 5px 0; font-size: 14px;"><strong>E-Mail:</strong> <span id="userEmail"></span></p>
-            <p style="margin: 5px 0; font-size: 14px;"><strong>User-ID:</strong> <span id="userId"></span></p>
+      <section id="ueberblick" class="tab-content active">
+        <h1>Überblick</h1>
+        <p class="subtitle">Deine Statistik von heute</p>
+      
+        <div class="chart-container">
+          <div class="circular-progress">
+            <svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="45"></circle>
+              <circle class="progress" cx="50" cy="50" r="45" id="progressCircle"></circle>
+            </svg>
+            <div class="chart-text">
+              <span id="percentageValue">0</span><small>%</small>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 10px;">Profil bearbeiten</a>
-
-      <button id="logoutBtn" class="btn-primary">Abmelden</button>
+        <div class="placeholder-card">Letzte Wäsche: Vor 20 Min.</div>
+      </section>
       
-      <div class="footer">
-          <p style="font-size: 12px; color: #bbb;">Washy - Sicher & Sauber</p>
-      </div>
+        <div class="placeholder-card">Letzte Wäsche: Vor 20 Min.</div>
+      </section>
+      
+      <section id="familie" class="tab-content">
+        <h1>Meine Familie</h1>
+        <p class="subtitle">Wer hat heute schon gewaschen?</p>
+        <div class="placeholder-card">Mama: 5x ✅</div>
+        <div class="placeholder-card">Papa: 3x ✅</div>
+      </section>
+
+      <section id="awards" class="tab-content">
+        <h1>Awards</h1>
+        <p class="subtitle">Sammle Seifenblasen!</p>
+        <div class="placeholder-card">🏆 Sauberkeits-König</div>
+        <div class="placeholder-card">🫧 10x in Folge gewaschen</div>
+      </section>
+
+      <section id="einstellungen" class="tab-content">
+        <h1>Einstellungen</h1>
+        <p class="subtitle">Konto & App verwalten</p>
+        
+        <div class="user-info-box">
+            <p><strong>E-Mail:</strong> <span id="userEmail"></span></p>
+            <p><strong>User-ID:</strong> <span id="userId"></span></p>
+        </div>
+
+        <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 15px;">👤 Profil bearbeiten</a>
+        <button id="logoutBtn" class="btn-primary">Abmelden</button>
+      </section>
+
+      <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('ueberblick')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span class="nav-text">Überblick</span>
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('familie')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span class="nav-text">Familie</span>
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('awards')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="7"></circle>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+          </svg>
+          <span class="nav-text">Awards</span>
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('einstellungen')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span class="nav-text">Einstellungen</span>
+        </div>
+      </nav>
+
     </div>
 
     <script src="js/background.js"></script>
     <script src="js/protected.js"></script>
     <script src="js/logout.js"></script>
+    
+    <script>
+      function switchTab(tabId) {
+        // Alle Inhalte verstecken
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        // Alle Nav-Items deaktivieren
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        
+        // Gewählten Tab anzeigen
+        document.getElementById(tabId).classList.add('active');
+        // Aktiven Nav-Button markieren (per Event oder Suche)
+        event.currentTarget.classList.add('active');
+      }
+    </script>
   </body>
 </html>
