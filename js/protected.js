@@ -54,19 +54,31 @@ function setWashPercentage(percent) {
 // 3. FAMILIEN-VERWALTUNG (ADD / EDIT / DELETE)
 // ==========================================
 let selectedAnimalEmoji = "";
+let selectedColorClass = "pink"; // Standardfarbe
 let currentEditCard = null; 
 
 /**
- * Steuert die Auswahl der Rolle (Kind/Erwachsener) über die Buttons
+ * Steuert die Auswahl der Rolle (Kind/Erwachsener)
  */
 function selectRole(element, roleValue) {
-    // Optisches Feedback: Alle Buttons zurücksetzen, gewählten markieren
     document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('selected'));
     element.classList.add('selected');
-    
-    // Den Wert im versteckten Input für die Speicherung ablegen
     const ageInput = document.getElementById('newMemberAge');
     if (ageInput) ageInput.value = roleValue;
+}
+
+/**
+ * Steuert die Auswahl der Hintergrundfarbe
+ */
+function selectColor(element, colorName) {
+    // Alle Markierungen im Modal entfernen
+    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+    // Gewählte Farbe markieren
+    element.classList.add('selected');
+    // Wert für die Speicherung setzen
+    selectedColorClass = colorName;
+    const colorInput = document.getElementById('newMemberColor');
+    if (colorInput) colorInput.value = colorName;
 }
 
 // Modal zum HINZUFÜGEN öffnen
@@ -78,9 +90,13 @@ function openAddMemberModal() {
   document.getElementById('deleteBtn').classList.add('hidden');
   document.getElementById('newMemberName').value = "";
   
-  // Standard-Rolle auf "Kind" setzen und ersten Button markieren
+  // Standard-Rolle: Kind
   const firstRoleBtn = document.querySelectorAll('.role-btn')[0];
   if (firstRoleBtn) selectRole(firstRoleBtn, 'Kind');
+  
+  // Standard-Farbe: Pink
+  const firstColorBtn = document.querySelector('.color-option.pink');
+  if (firstColorBtn) selectColor(firstColorBtn, 'pink');
   
   document.querySelectorAll('.animal-option').forEach(opt => opt.classList.remove('selected'));
   document.getElementById('addMemberModal').classList.remove('hidden');
@@ -91,20 +107,27 @@ function openEditModal(btnElement) {
   currentEditCard = btnElement.closest('.member-card');
   
   const currentName = currentEditCard.querySelector('.member-name').innerText;
-  const currentRole = currentEditCard.querySelector('.member-sub').innerText; // "Kind" oder "Erwachsener"
+  const currentRole = currentEditCard.querySelector('.member-sub').innerText;
   const currentEmoji = currentEditCard.querySelector('.avatar-emoji').innerText;
+
+  // Aktuelle Farbe der Karte erkennen
+  const colorClasses = ["pink", "yellow", "blue", "green", "purple"];
+  const currentColor = colorClasses.find(c => currentEditCard.classList.contains(c)) || "pink";
 
   document.getElementById('modalTitle').innerText = "Mitglied bearbeiten";
   document.getElementById('newMemberName').value = currentName;
   document.getElementById('deleteBtn').classList.remove('hidden');
   
-  // Den passenden Rollen-Button vorselektieren
+  // Rolle vorselektieren
   document.querySelectorAll('.role-btn').forEach(btn => {
-      if (btn.innerText === currentRole) {
-          selectRole(btn, currentRole);
-      }
+      if (btn.innerText === currentRole) selectRole(btn, currentRole);
   });
 
+  // Farbe vorselektieren
+  const colorBtn = document.querySelector(`.color-option.${currentColor}`);
+  if (colorBtn) selectColor(colorBtn, currentColor);
+
+  // Emoji vorselektieren
   selectedAnimalEmoji = currentEmoji;
   document.querySelectorAll('.animal-option').forEach(opt => {
       if (opt.querySelector('span').innerText === currentEmoji) {
@@ -130,8 +153,8 @@ function selectAnimal(element, emoji) {
 // Speichern (erkennt ob Neu oder Bearbeiten)
 function saveMember() {
   const name = document.getElementById('newMemberName').value;
-  // Wert kommt jetzt aus dem versteckten Input, der durch selectRole gesetzt wird
   const role = document.getElementById('newMemberAge').value || "Kind";
+  const color = document.getElementById('newMemberColor').value || "pink";
   
   if (!name || !selectedAnimalEmoji) {
       alert("Bitte Name eingeben und Tier wählen!");
@@ -143,9 +166,13 @@ function saveMember() {
       currentEditCard.querySelector('.member-name').innerText = name;
       currentEditCard.querySelector('.member-sub').innerText = role;
       currentEditCard.querySelector('.avatar-emoji').innerText = selectedAnimalEmoji;
+      
+      // Farbkassen aktualisieren
+      currentEditCard.classList.remove("pink", "yellow", "blue", "green", "purple");
+      currentEditCard.classList.add(color);
   } else {
       // MODUS: NEU HINZUFÜGEN
-      addNewFamilyCard(name, role, selectedAnimalEmoji);
+      addNewFamilyCard(name, role, selectedAnimalEmoji, color);
   }
 
   closeAddMemberModal();
@@ -158,12 +185,12 @@ function deleteMember() {
   }
 }
 
-function addNewFamilyCard(name, role, emoji) {
+function addNewFamilyCard(name, role, emoji, color) {
   const familyList = document.getElementById('familyList');
   const newCard = document.createElement('div');
   
-  // Standard-Farbe (kannst du später auch dynamisch machen)
-  newCard.className = "member-card yellow"; 
+  // Gewählte Farbe als Klasse setzen
+  newCard.className = `member-card ${color}`; 
   
   newCard.innerHTML = `
       <div class="member-header">

@@ -30,9 +30,7 @@
         </p>
       
         <h2 class="section-title">Live Aktivitäten</h2>
-        
         <div id="activitiesList" class="activities-container">
-          
           <div class="activity-item">
             <div class="activity-icon" style="background-color: #ffd9e9;">✨</div>
             <div class="activity-info">
@@ -40,32 +38,7 @@
             </div>
             <div class="activity-time">gerade eben</div>
           </div>
-      
-          <div class="activity-item">
-            <div class="activity-icon" style="background-color: #e1f5fe;">🧼</div>
-            <div class="activity-info">
-              <p class="activity-fulltext"><strong>Fabienne</strong> hat die Hände korrekt gewaschen</p>
-            </div>
-            <div class="activity-time">gerade eben</div>
           </div>
-      
-          <div class="activity-item">
-            <div class="activity-icon" style="background-color: #E8F5E9;">💧</div>
-            <div class="activity-info">
-              <p class="activity-fulltext"><strong>Lara</strong> hat die Hände korrekt gewaschen</p>
-            </div>
-            <div class="activity-time">vor 2min</div>
-          </div>
-      
-          <div class="activity-item">
-            <div class="activity-icon" style="background-color: #f0f4ff;">🫧</div>
-            <div class="activity-info">
-              <p class="activity-fulltext"><strong>Leon</strong> hat die Hände korrekt gewaschen</p>
-            </div>
-            <div class="activity-time">vor 15min</div>
-          </div>
-      
-        </div>
       </section>
       
       <section id="familie" class="tab-content">
@@ -78,7 +51,7 @@
               <div class="member-avatar"><span class="avatar-emoji">🦄</span></div>
               <div class="member-meta">
                 <h3 class="member-name">Lena</h3>
-                <p class="member-sub">6 Jahre</p>
+                <p class="member-sub">Kind</p>
               </div>
               <div class="edit-btn" onclick="openEditModal(this)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
@@ -103,6 +76,11 @@
             <h2 id="modalTitle">Neues Mitglied</h2>
             
             <div class="input-group">
+              <label>Name</label>
+              <input type="text" id="newMemberName" placeholder="Name eingeben">
+            </div>
+
+            <div class="input-group">
               <label>Rolle auswählen</label>
               <div class="role-selection">
                 <button type="button" class="role-btn selected" onclick="selectRole(this, 'Kind')">Kind</button>
@@ -110,10 +88,17 @@
               </div>
               <input type="hidden" id="newMemberAge" value="Kind">
             </div>
-      
+
             <div class="input-group">
-              <label>Alter oder Rolle</label>
-              <input type="text" id="newMemberAge" placeholder="Eingeben (z.B. 5 Jahre)">
+              <label>Hintergrundfarbe wählen</label>
+              <div class="color-selection" id="colorSelection">
+                <div class="color-option pink selected" onclick="selectColor(this, 'pink')"></div>
+                <div class="color-option yellow" onclick="selectColor(this, 'yellow')"></div>
+                <div class="color-option blue" onclick="selectColor(this, 'blue')"></div>
+                <div class="color-option green" onclick="selectColor(this, 'green')"></div>
+                <div class="color-option purple" onclick="selectColor(this, 'purple')"></div>
+              </div>
+              <input type="hidden" id="newMemberColor" value="pink">
             </div>
       
             <p class="selection-label">Tier-Icon auswählen</p>
@@ -145,48 +130,29 @@
       <section id="einstellungen" class="tab-content">
         <h1>Einstellungen</h1>
         <p class="subtitle">Konto & App verwalten</p>
-        
         <div class="user-info-box">
             <p><strong>E-Mail:</strong> <span id="userEmail"></span></p>
             <p><strong>User-ID:</strong> <span id="userId"></span></p>
         </div>
-
         <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 15px;">Profil bearbeiten</a>
         <button id="logoutBtn" class="btn-primary">Abmelden</button>
       </section>
 
       <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('ueberblick')">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           <span class="nav-text">Überblick</span>
         </div>
-        
         <div class="nav-item" onclick="switchTab('familie')">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
           <span class="nav-text">Familie</span>
         </div>
-        
         <div class="nav-item" onclick="switchTab('awards')">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="7"></circle>
-            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-          </svg>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
           <span class="nav-text">Awards</span>
         </div>
-        
         <div class="nav-item" onclick="switchTab('einstellungen')">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span class="nav-text">Einstellungen</span>
         </div>
       </nav>
@@ -199,14 +165,9 @@
     
     <script>
       function switchTab(tabId) {
-        // Alle Inhalte verstecken
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        // Alle Nav-Items deaktivieren
         document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        
-        // Gewählten Tab anzeigen
         document.getElementById(tabId).classList.add('active');
-        // Aktiven Nav-Button markieren (per Event oder Suche)
         event.currentTarget.classList.add('active');
       }
     </script>

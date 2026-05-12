@@ -602,3 +602,41 @@ button:active { transform: scale(0.98); }
 .role-btn:hover:not(.selected) {
   background: #f0f0f0;
 }
+
+.color-selection {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 5px;
+}
+
+.color-option {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.color-option:hover { transform: scale(1.1); }
+
+/* Die Farben */
+.color-option.pink { background-color: #fdf2f7; border-color: #fdf2f7; }
+.color-option.yellow { background-color: #fff9e6; border-color: #fff9e6; }
+.color-option.blue { background-color: #eef2ff; border-color: #eef2ff; }
+.color-option.green { background-color: #e8f5e9; border-color: #e8f5e9; }
+.color-option.purple { background-color: #f3e5f5; border-color: #f3e5f5; }
+
+/* Markierung für die gewählte Farbe */
+.color-option.selected {
+  border-color: #B4DDFC; /* Ein schöner blauer Ring um die gewählte Farbe */
+  transform: scale(1.1);
+}
+
+/* Neue Farb-Varianten für die Karten (falls noch nicht alle drin sind) */
+.member-card.green { background-color: #e8f5e9; }
+.member-card.green strong { color: #2e7d32; }
+
+.member-card.purple { background-color: #f3e5f5; }
+.member-card.purple strong { color: #7b1fa2; }
