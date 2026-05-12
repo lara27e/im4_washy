@@ -1,35 +1,84 @@
 <?php
 session_start();
-require_once '../system/config.php';
+include_once "../system/config.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true);
+header("Content-Type: application/json");
 
-    $userID = $_SESSION['user_id'];
-    $vorname = trim($data['vorname'] ?? '');
-    $nachname = trim($data['nachname'] ?? '');
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(["status" => "error", "message" => "Nicht eingeloggt"]);
+    exit;
+}
 
-    if (!$vorname || !$nachname) {
-        echo json_encode(["status" => "error", "message" => "Vorname and Nachname are required"]);
+$userID = $_SESSION['user_id'];
+
+$data = json_decode(file_get_contents("php://input"), true);
+
+$vorname = $data['vorname'] ?? '';
+$nachname = $data['nachname'] ?? '';
+$email = $data['email'] ?? '';
+$oldPassword = $data['oldPassword'] ?? '';
+$newPassword = $data['newPassword'] ?? '';
+
+try {
+
+    // Aktuellen User laden
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+    $stmt->execute([':id' => $userID]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        echo json_encode(["status" => "error", "message" => "User nicht gefunden"]);
         exit;
     }
 
-    //echo json_encode(["status" => "success", "vorname" => $vorname, "nachname" => $nachname]);
+    // Passwort nur ändern wenn neues eingegeben wurde
+    if (!empty($newPassword)) {
 
+        if (!password_verify($oldPassword, $user['password'])) {
+            echo json_encode(["status" => "error", "message" => "Altes Passwort falsch"]);
+            exit;
+        }
 
-    // Check user in DB
-    $stmt = $pdo->prepare("UPDATE users SET firstname = :vorname, lastname = :nachname WHERE id = :userID");
-    $stmt->execute([":vorname" => $vorname, ":nachname" => $nachname, ":userID" => $userID]);
-    $userUpdate = $stmt->fetch();
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-    // Verify password
-    if ($userUpdate) {
-        echo json_encode(["status" => "success"]);
+        $update = $pdo->prepare("
+            UPDATE users 
+            SET firstname = :vorname,
+                lastname = :nachname,
+                email = :email,
+                password = :password
+            WHERE id = :id
+        ");
+
+        $update->execute([
+            ':vorname' => $vorname,
+            ':nachname' => $nachname,
+            ':email' => $email,
+            ':password' => $hashedPassword,
+            ':id' => $userID
+        ]);
+
     } else {
-        echo json_encode(["status" => "error", "message" => "Invalid credentials"]);
+
+        // Nur Name & Email ändern
+        $update = $pdo->prepare("
+            UPDATE users 
+            SET firstname = :vorname,
+                lastname = :nachname,
+                email = :email
+            WHERE id = :id
+        ");
+
+        $update->execute([
+            ':vorname' => $vorname,
+            ':nachname' => $nachname,
+            ':email' => $email,
+            ':id' => $userID
+        ]);
     }
 
-} else {
-    echo json_encode(["status" => "error", "message" => "Invalid request method"]);
-} 
+    echo json_encode(["status" => "success"]);
 
+} catch (Exception $e) {
+    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+}

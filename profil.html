@@ -6,31 +6,63 @@
     <title>Washy - Profil</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+
+<body class="profil-page">
+
     <div class="login-container">
         <div class="logo">👤</div>
         <h1>Dein Profil</h1>
         <p class="subtitle">Personalisiere deine Daten</p>
 
         <form id="profilForm">
+
             <div class="input-group">
                 <label>Vorname</label>
                 <input type="text" id="vorname" placeholder="Dein Vorname" required>
             </div>
+
             <div class="input-group">
                 <label>Nachname</label>
                 <input type="text" id="nachname" placeholder="Dein Nachname" required>
             </div>
+
+            <div class="input-group">
+                <label>E-Mail</label>
+                <input type="email" id="email" placeholder="Deine E-Mail" required>
+            </div>
+
+            <div class="input-group">
+    <span id="togglePassword" class="link-text">Passwort anpassen</span>
+</div>
+
+<div id="passwordBox" class="hidden">
+
+    <div class="input-group">
+        <label>Altes Passwort</label>
+        <input type="password" id="oldPassword" placeholder="Altes Passwort">
+    </div>
+
+    <div class="input-group">
+        <label>Neues Passwort</label>
+        <input type="password" id="newPassword" placeholder="Neues Passwort">
+    </div>
+
+</div>
+
             <button type="submit" class="btn-primary">Anpassen</button>
+
         </form>
 
         <div class="footer">
-            <a href="login.html" class="btn-secondary" style="text-decoration: none; display: block; margin-top: 10px;">Zurück zum Dashboard</a>
+            <a href="login.html" class="btn-secondary" style="text-decoration: none; display: block; margin-top: 10px;">
+                Zurück zum Dashboard
+            </a>
         </div>
     </div>
 
     <script src="js/background.js"></script> 
     <script src="js/auth.js"></script>
     <script src="js/profil.js"></script>
+
 </body>
 </html>

@@ -1,41 +1,7 @@
-/* style.css 
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  max-width: 600px;
-  line-height: 1.5;
-}
+/* ========================================= */
+/* 1. GRUND-SETUP & ANIMATIONEN              */
+/* ========================================= */
 
-h1 {
-  margin-bottom: 1em;
-}
-
-form > div {
-  margin-bottom: 1em;
-}
-
-label {
-  display: inline-block;
-  width: 80px;
-}
-
-input[type="email"],
-input[type="password"] {
-  width: 200px;
-  padding: 4px;
-}
-
-button {
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-p {
-  margin-top: 1em;
-}
-*/
-
-/* Grund-Setup */
 body {
   margin: 0;
   padding: 0;
@@ -46,24 +12,20 @@ body {
   align-items: center;
   height: 100vh;
   color: #555;
-  overflow: hidden; /* Verhindert Scrollbalken durch die Punkte */
+  overflow: hidden; /* Verhindert Scrollen durch Hintergrund-Punkte */
   position: relative;
 }
 
 @keyframes float {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    /* Größere Sprünge für mehr Dynamik */
-    transform: translate(25px, -35px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(25px, -35px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dot {
@@ -72,10 +34,14 @@ body {
   z-index: -1;
   opacity: 0.4;
   pointer-events: none;
-  animation: float ease-in-out infinite; /* "ease-in-out" macht es flüssiger als "linear" */
+  animation: float ease-in-out infinite;
 }
 
-/* Der Container muss über den Punkten liegen */
+/* ========================================= */
+/* 2. CONTAINER & LAYOUT                     */
+/* ========================================= */
+
+/* Der Kasten für Login, Register und Profil */
 .login-container {
   position: relative;
   z-index: 10;
@@ -83,8 +49,21 @@ body {
   max-width: 400px;
   text-align: center;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.8); /* Leicht transparent, falls ein Punkt dahinter liegt */
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
+}
+
+/* Der Container für das Dashboard (App-Ansicht) */
+.app-container {
+  width: 100%;
+  max-width: 450px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  padding-bottom: 100px; /* Platz für Nav unten */
+  overflow-y: auto; /* Erlaubt Scrollen im Dashboard */
 }
 
 .logo {
@@ -95,13 +74,13 @@ body {
 }
 
 .logo img {
-  max-width: 120px; /* Hier kannst du die Größe deines Logos feinjustieren */
+  max-width: 120px;
   height: auto;
   display: block;
 }
 
 h1 {
-  color: #9ad3ff; /* Das sanfte Blau aus dem Bild */
+  color: #9ad3ff;
   font-size: 24px;
   margin-bottom: 5px;
 }
@@ -112,7 +91,10 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* Formular-Elemente */
+/* ========================================= */
+/* 3. FORMULAR-ELEMENTE & BUTTONS            */
+/* ========================================= */
+
 .input-group {
   text-align: left;
   margin-bottom: 15px;
@@ -137,11 +119,6 @@ input {
   color: #333;
 }
 
-input::placeholder {
-  color: #ccc;
-}
-
-/* Buttons */
 button, .btn-secondary {
   width: 100%;
   padding: 12px;
@@ -153,43 +130,29 @@ button, .btn-secondary {
   text-decoration: none;
   display: inline-block;
   box-sizing: border-box;
+  text-align: center;
 }
 
-button:active {
-  transform: scale(0.98);
-}
+button:active { transform: scale(0.98); }
 
 .btn-primary {
   border: none;
-  background: linear-gradient(90deg, #B4DDFC, #ffd9e9); /* Blau-Grün Verlauf */
+  background: linear-gradient(90deg, #B4DDFC, #ffd9e9);
   color: white;
   margin-top: 10px;
-  margin-bottom: 15px;
 }
 
 .btn-secondary {
   border: 2px solid #B4DDFC;
   background-color: white;
   color: #9dd5ff;
-}
-
-.footer {
   margin-top: 10px;
 }
 
-/* Container für die App-Ansicht */
-.app-container {
-  width: 100%;
-  max-width: 450px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-  padding-bottom: 100px; /* Platz für die Navigation unten */
-}
+/* ========================================= */
+/* 4. DASHBOARD & TAB-SYSTEM                 */
+/* ========================================= */
 
-/* Tab-System */
 .tab-content {
   display: none;
   text-align: center;
@@ -200,30 +163,137 @@ button:active {
   display: block;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Platzhalter-Karten */
-.placeholder-card, .user-info-box {
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  border: 1px solid #f0f4ff;
-  color: #777;
-}
-
 .user-info-box {
   text-align: left;
   background: #f0f4ff;
-  border: none;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 15px;
   color: #555;
 }
 
-/* NAVIGATION UNTEN */
+/* ========================================= */
+/* 5. KREISDIAGRAMM (STATISTIK)              */
+/* ========================================= */
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.circular-progress {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.circular-progress svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circular-progress circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.circular-progress circle.bg { stroke: #f0f4ff; }
+
+.circular-progress circle.progress {
+  stroke: #B6DDFB;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  transition: stroke-dashoffset 1s ease-out;
+}
+
+.chart-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: baseline;
+}
+
+.chart-text span#percentageValue {
+  font-size: 52px;
+  font-weight: bold;
+  color: #B6DDFB;
+}
+
+.chart-text small {
+  font-size: 22px;
+  font-weight: bold;
+  color: #B6DDFB;
+}
+
+.chart-description {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.chart-description span { color: #B6DDFB; font-weight: bold; }
+
+/* ========================================= */
+/* 6. LIVE AKTIVITÄTEN FEED                  */
+/* ========================================= */
+
+.section-title {
+  text-align: left;
+  font-size: 15px;
+  color: #48A14D;
+  margin: 20px 0 10px 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.section-title::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: #48A14D;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.activity-item {
+  background: #F6FBF6;
+  border-radius: 15px;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  border: 1px solid #f8f9fc;
+  margin-bottom: 10px;
+}
+
+.activity-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  margin-right: 12px;
+}
+
+.activity-info { flex: 1; text-align: left; }
+.activity-fulltext { font-size: 13px; color: #555; margin: 0; }
+.activity-time { font-size: 11px; color: #bbb; font-weight: 600; }
+
+/* ========================================= */
+/* 7. NAVIGATION UNTEN                       */
+/* ========================================= */
+
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -234,7 +304,7 @@ button:active {
   background: white;
   display: flex;
   justify-content: space-around;
-  padding: 10px 0 25px 0; /* Padding unten für iPhone Home-Bar */
+  padding: 10px 0 25px 0;
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
   box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
@@ -246,92 +316,289 @@ button:active {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  color: #D1D1D1; /* Helles Grau für inaktive Icons */
+  color: #D1D1D1;
   transition: all 0.3s ease;
   flex: 1;
 }
 
-.nav-icon {
-  width: 24px;   /* Einheitliche Breite */
-  height: 24px;  /* Einheitliche Höhe */
-  margin-bottom: 6px;
-  stroke: currentColor; /* Nutzt die Farbe des übergeordneten .nav-item */
+.nav-item.active { color: #B6DDFB; }
+
+.nav-icon { width: 24px; height: 24px; margin-bottom: 6px; stroke: currentColor; }
+.nav-text { font-size: 10px; font-weight: 600; text-transform: uppercase; }
+
+/* ========================================= */
+/* 8. PROFIL-SEITE & UTILS                   */
+/* ========================================= */
+
+.profil-page {
+  background-color: #f8f3f6;
+  overflow: auto;
 }
 
-.nav-item.active {
-  color: #B6DDFB; /* Deine Wunschfarbe für das aktive Icon */
-}
-
-.nav-text {
-  font-size: 10px;
+.link-text {
+  color: #9dd5ff;
+  font-size: 14px;
+  cursor: pointer;
   font-weight: 600;
-  letter-spacing: 0.5px;
-}
-/* Button Fix für Dashboard */
-.app-container .btn-primary, .app-container .btn-secondary {
-    margin-top: 5px;
 }
 
-/* Kreisdiagramm */
+.hidden { display: none !important; }
 
-.chart-container {
+/* Container für die Liste */
+.family-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+/* Die Hauptkarte */
+.member-card {
+  border-radius: 25px;
+  padding: 20px;
+  text-align: left;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* Header-Bereich (Avatar & Name) */
+.member-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.member-avatar {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 30px 0;
-}
-
-.circular-progress {
+  font-size: 30px;
+  margin-right: 15px;
   position: relative;
-  width: 220px;
-  height: 220px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.circular-progress svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg); /* Startet oben in der Mitte */
-}
-
-.circular-progress circle {
-  fill: none;
-  stroke-width: 8; /* Dicke des Rings */
-  stroke-linecap: round; /* Macht die Enden rund */
-}
-
-.circular-progress circle.bg {
-  stroke: #f0f4ff; /* Sehr helles Blau/Grau für den Pfad */
-}
-
-.circular-progress circle.progress {
-  stroke: #B6DDFB; /* Deine Wunschfarbe */
-  stroke-dasharray: 283; /* Umfang des Kreises (2 * PI * r) */
-  stroke-dashoffset: 283; /* Startet komplett leer */
-  transition: stroke-dashoffset 1s ease-out; /* Schöne Animation beim Laden */
-}
-
-.chart-text {
+.add-badge {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  width: 100%;
+  top: -2px;
+  left: -2px;
+  background: #3f51b5; /* Dunkelblaues Badge */
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 14px;
   display: flex;
   justify-content: center;
-  align-items: baseline; /* Sorgt dafür, dass das %-Zeichen unten bündig mit der Zahl steht */
+  align-items: center;
+  border: 2px solid white;
 }
 
-.chart-text span#percentageValue {
-  font-size: 58px; /* Noch ein Stück größer, da jetzt Platz ist */
-  font-weight: bold;
-  color: #B6DDFB;
-  line-height: 1;
+.member-meta h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
 }
 
-.chart-text small {
-  font-size: 24px;
+.member-meta p {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.edit-btn {
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  transition: transform 0.2s;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Löschen Button im Modal */
+.btn-delete {
+  background: #ffcdd2;
+  color: #c62828;
+  border: none;
+  border-radius: 15px;
+  padding: 10px;
+  margin-right: auto; /* Schiebt andere Buttons nach rechts */
+  cursor: pointer;
   font-weight: bold;
-  color: #B6DDFB;
-  margin-left: 2px;
+}
+
+/* Statistik-Grid (Die 3 weißen Boxen) */
+.member-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px 5px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.stat-item strong {
+  display: block;
+  font-size: 16px;
+  color: #3f51b5;
+}
+
+.stat-item p {
+  margin: 2px 0 0 0;
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* FARB-VARIANTEN */
+.member-card.pink { background-color: #fdf2f7; }
+.member-card.pink strong { color: #e91e63; }
+
+.member-card.yellow { background-color: #fff9e6; }
+.member-card.yellow strong { color: #ffa000; }
+
+.member-card.blue { background-color: #eef2ff; }
+.member-card.blue strong { color: #3f51b5; }
+
+/* HINZUFÜGEN BUTTON */
+.add-family-btn {
+  background: none;
+  border: 2px dashed #B4DDFC;
+  border-radius: 20px;
+  padding: 15px;
+  color: #3f51b5;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.add-family-btn:hover {
+  background: #f0f4ff;
+}
+
+/* Modal Hintergrund */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Karte */
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 25px;
+  border-radius: 30px;
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.selection-label {
+  font-size: 14px;
+  color: #666;
+  margin: 20px 0 10px 0;
+}
+
+/* Tier Auswahl-Gitter */
+.animal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.animal-option {
+  text-align: center;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.animal-option span { font-size: 30px; display: block; }
+.animal-option p { font-size: 10px; margin: 5px 0 0 0; color: #888; }
+
+/* Markierung wenn ausgewählt */
+.animal-option.selected {
+  background-color: #f3e5f5;
+  box-shadow: 0 0 0 2px #ce93d8;
+}
+
+/* Buttons im Modal */
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cancel {
+  background: #f0f0f0;
+  color: #666;
+  border: none;
+  border-radius: 15px;
+  padding: 15px;
+  flex: 1;
+}
+
+.btn-save {
+  background: #B4DDFC;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 15px;
+  flex: 1;
+}
+
+.role-selection {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.role-btn {
+  flex: 1;
+  background: #f8f9fc;
+  border: 2px solid transparent;
+  color: #888;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.role-btn.selected {
+  background: #eef2ff;
+  border-color: #B4DDFC;
+  color: #3f51b5;
+}
+
+.role-btn:hover:not(.selected) {
+  background: #f0f0f0;
 }
