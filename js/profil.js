@@ -8,6 +8,10 @@ async function loadProfile() {
     });
         const result = await response.text();
         console.log("Profile data:", result);
+
+        document.querySelector("vorname").value = result.vorname || "";
+        document.getElementById("nachname").value = result.nachname || "";
+
     }   catch (error) {
         console.error("Error loading profile:", error);
     }
