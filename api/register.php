@@ -2,40 +2,40 @@
 // register.php
 session_start();
 header('Content-Type: application/json');
-
 require_once '../system/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $data = json_decode(file_get_contents("php://input"), true);
 
-    $email    = trim($data['email'] ?? '');
-    $password = trim($data['password'] ?? '');
+    $email     = trim($data['email'] ?? '');
+    $password  = trim($data['password'] ?? '');
+    $firstname = trim($data['firstname'] ?? ''); // Neu hinzugefügt
+    $lastname  = trim($data['lastname'] ?? '');  // Neu hinzugefügt
 
-    if (!$email || !$password) {
-        echo json_encode(["status" => "error", "message" => "Email and password are required"]);
+    if (!$email || !$password || !$firstname || !$lastname) {
+        echo json_encode(["status" => "error", "message" => "Alle Felder werden benötigt"]);
         exit;
     }
 
-    // Check if email already exists
+    // Check email
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email");
     $stmt->execute([':email' => $email]);
     if ($stmt->fetch()) {
-        echo json_encode(["status" => "error", "message" => "Email is already in use"]);
+        echo json_encode(["status" => "error", "message" => "Email existiert bereits"]);
         exit;
     }
 
-    // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert the new user
-    $insert = $pdo->prepare("INSERT INTO users (email, password) VALUES (:email, :pass)");
-    $insert->execute([
-        ':email' => $email,
-        ':pass'  => $hashedPassword
-    ]);
+    // SQL erweitert um firstname und lastname (siehe Bild 2)
+    $insert = $pdo->prepare("INSERT INTO users (email, password, firstname, lastname) VALUES (?, ?, ?, ?)");
+    $insert->execute([$email, $hashedPassword, $firstname, $lastname]);
 
-    echo json_encode(["status" => "success"]);
-} else {
-    echo json_encode(["status" => "error", "message" => "Invalid request method"]);
+    $newUserId = $pdo->lastInsertId();
+
+    echo json_encode([
+        "status" => "success",
+        "user_id" => $newUserId 
+    ]);
+    exit; // Wichtig: Hier abbrechen
 }

@@ -97,9 +97,23 @@ h1 {
 
 .input-group {
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 25px; /* Von 15px auf 25px erhöht für mehr Abstand */
 }
 
+/* Neu: Damit die "Überschriften" im Formular nicht am Feld darüber kleben */
+h2 {
+  color: #9ad3ff;
+  font-size: 20px;
+  margin: 30px 0 15px 0; /* Mehr Platz nach oben (30px) */
+  text-align: center;
+}
+
+/* Optional: Eine Trennlinie, falls du sie nutzt */
+hr {
+  border: 0;
+  border-top: 1px solid #f2f2f2;
+  margin: 20px 0 30px 0;
+}
 label {
   display: block;
   font-size: 12px;

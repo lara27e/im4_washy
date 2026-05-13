@@ -8,25 +8,49 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="logo">✨</div>
-        <h1>Haushalt erstellen</h1>
-        <p class="subtitle">Werde Teil der Washy-Familie</p>
-
+    
+        <h1>Registrierung</h1>
+        <p class="subtitle">Erstelle dein Konto und verbinde dein Gerät</p>
+    
         <form id="registerForm">
+            
+            <h2>Persönliche Daten</h2>
+    
             <div class="input-group">
-                <label>Familien-E-Mail</label>
-                <input type="email" id="email" placeholder="name@beispiel.de" required>
+                <label for="firstname">Vorname</label>
+                <input type="text" name="firstname" id="firstname" placeholder="Max" required>
             </div>
+    
             <div class="input-group">
-                <label>Passwort festlegen</label>
-                <input type="password" id="password" placeholder="••••••" required>
+                <label for="lastname">Nachname</label>
+                <input type="text" name="lastname" id="lastname" placeholder="Mustermann" required>
             </div>
-            <button type="submit" class="btn-primary">Konto erstellen</button>
+    
+            <div class="input-group">
+                <label for="email">E-Mail</label>
+                <input type="email" name="email" id="email" placeholder="max@beispiel.de" required>
+            </div>
+    
+            <div class="input-group">
+                <label for="password">Passwort</label>
+                <input type="password" name="password" id="password" placeholder="••••••••" required>
+            </div>
+    
+            <hr> <!-- Die Trennlinie nutzt nun auch die Abstände aus deinem CSS -->
+    
+            <h2>Sensor-Kopplung</h2>
+    
+            <div class="input-group">
+                <label for="serial_number">Seriennummer</label>
+                <input type="text" name="serial_number" id="serial_number" placeholder="SN-12345678" maxlength="16" required>
+            </div>
+    
+            <button type="submit" class="btn-primary">Konto erstellen & Gerät koppeln</button>
+            
+            <p style="margin-top: 20px; font-size: 14px;">
+                Schon dabei? <a href="login.php" class="link-text">Login</a>
+            </p>
         </form>
-
-        <div class="footer">
-            <p>Schon dabei? <a href="login.html" style="color: #74b9ff; text-decoration: none; font-weight: bold;">Jetzt einloggen</a></p>
-        </div>
     </div>
 
     <script src="js/background.js"></script> 

@@ -1,30 +1,45 @@
 // register.js
-document
-  .getElementById("registerForm")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+  // Alle Daten aus dem Formular holen
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const firstname = document.getElementById("firstname").value.trim();
+  const lastname = document.getElementById("lastname").value.trim();
+  const serial_number = document.getElementById("serial_number").value.trim();
 
-    try {
-      const response = await fetch("api/register.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+  try {
+      // SCHRITT 1: User registrieren
+      const regResponse = await fetch("api/register.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, firstname, lastname }),
       });
-      const result = await response.json();
+      const regResult = await regResponse.json();
 
-      if (result.status === "success") {
-        alert("Registration successful! You can now log in.");
-        window.location.href = "login.html";
+      if (regResult.status === "success") {
+          const userId = regResult.user_id;
+
+          // SCHRITT 2: Gerät koppeln (mit der neuen user_id)
+          const deviceResponse = await fetch("api/register_device.php", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ user_id: userId, serial_number: serial_number }),
+          });
+          const deviceResult = await deviceResponse.json();
+
+          if (deviceResult.status === "success") {
+              alert("Registrierung und Kopplung erfolgreich!");
+              window.location.href = "login.html";
+          } else {
+              alert("User erstellt, aber Sensor-Fehler: " + deviceResult.message);
+          }
       } else {
-        alert(result.message || "Registration failed.");
+          alert("Fehler bei Registrierung: " + regResult.message);
       }
-    } catch (error) {
+  } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong!");
-    }
-  });
+      alert("Etwas ist schiefgelaufen!");
+  }
+});
