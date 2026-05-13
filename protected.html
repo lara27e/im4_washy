@@ -1,22 +1,175 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <title>Protected Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Washy - Dashboard</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <h1>Protected Page</h1>
+    <div class="app-container">
+      
+      <section id="ueberblick" class="tab-content active">
+        <h1>Überblick</h1>
+        <p class="subtitle">Deine Statistik von heute</p>
+      
+        <div class="chart-container">
+          <div class="circular-progress">
+            <svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="45"></circle>
+              <circle class="progress" cx="50" cy="50" r="45" id="progressCircle"></circle>
+            </svg>
+            <div class="chart-text">
+              <span id="percentageValue">0</span><small>%</small>
+            </div>
+          </div>
+        </div>
+      
+        <p class="chart-description">
+          <span id="desc-percentage">0</span>% wurden heute richtig die Hände gewaschen.
+        </p>
+      
+        <h2 class="section-title">Live Aktivitäten</h2>
+        <div id="activitiesList" class="activities-container">
+          <div class="activity-item">
+            <div class="activity-icon" style="background-color: #ffd9e9;">✨</div>
+            <div class="activity-info">
+              <p class="activity-fulltext"><strong>Sheryn</strong> hat die Hände korrekt gewaschen</p>
+            </div>
+            <div class="activity-time">gerade eben</div>
+          </div>
+          </div>
+      </section>
+      
+      <section id="familie" class="tab-content">
+        <h1>Meine Familie</h1>
+        <p class="subtitle">Statistiken deiner Liebsten</p>
+      
+        <div id="familyList" class="family-list">
+          <div class="member-card pink">
+            <div class="member-header">
+              <div class="member-avatar"><span class="avatar-emoji">🦄</span></div>
+              <div class="member-meta">
+                <h3 class="member-name">Lena</h3>
+                <p class="member-sub">Kind</p>
+              </div>
+              <div class="edit-btn" onclick="openEditModal(this)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="member-stats">
+              <div class="stat-item"><strong>0/0</strong><p>Heute</p></div>
+              <div class="stat-item"><strong>27</strong><p>Woche</p></div>
+              <div class="stat-item"><strong>4</strong><p>Vergessen</p></div>
+            </div>
+          </div>
+        </div>
+      
+        <button class="add-family-btn" onclick="openAddMemberModal()">
+          <span>+</span> Mitglied hinzufügen
+        </button>
+      
+        <div id="addMemberModal" class="modal-overlay hidden">
+          <div class="modal-content">
+            <h2 id="modalTitle">Neues Mitglied</h2>
+            
+            <div class="input-group">
+              <label>Name</label>
+              <input type="text" id="newMemberName" placeholder="Name eingeben">
+            </div>
 
-    <!-- This is where we'll dynamically show the protected content -->
-    <div id="protectedContent">
-      <h2>Welcome, <span id="userEmail"></span>!</h2>
-      <p>Your user ID is: <span id="userId"></span></p>
+            <div class="input-group">
+              <label>Rolle auswählen</label>
+              <div class="role-selection">
+                <button type="button" class="role-btn selected" onclick="selectRole(this, 'Kind')">Kind</button>
+                <button type="button" class="role-btn" onclick="selectRole(this, 'Erwachsener')">Erwachsener</button>
+              </div>
+              <input type="hidden" id="newMemberAge" value="Kind">
+            </div>
+
+            <div class="input-group">
+              <label>Hintergrundfarbe wählen</label>
+              <div class="color-selection" id="colorSelection">
+                <div class="color-option pink selected" onclick="selectColor(this, 'pink')"></div>
+                <div class="color-option yellow" onclick="selectColor(this, 'yellow')"></div>
+                <div class="color-option blue" onclick="selectColor(this, 'blue')"></div>
+                <div class="color-option green" onclick="selectColor(this, 'green')"></div>
+                <div class="color-option purple" onclick="selectColor(this, 'purple')"></div>
+              </div>
+              <input type="hidden" id="newMemberColor" value="pink">
+            </div>
+      
+            <p class="selection-label">Tier-Icon auswählen</p>
+            <div class="animal-grid">
+              <div class="animal-option" onclick="selectAnimal(this, '🐢')"><span>🐢</span><p>Schildkröte</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🐬')"><span>🐬</span><p>Delfin</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🦭')"><span>🦭</span><p>Robbe</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🦈')"><span>🦈</span><p>Hai</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🐧')"><span>🐧</span><p>Pinguin</p></div>
+              <div class="animal-option" onclick="selectAnimal(this, '🐙')"><span>🐙</span><p>Oktopus</p></div>
+            </div>
+      
+            <div class="modal-buttons">
+              <button id="deleteBtn" class="btn-delete hidden" onclick="deleteMember()">Löschen</button>
+              <button class="btn-cancel" onclick="closeAddMemberModal()">Abbrechen</button>
+              <button id="saveBtn" class="btn-save" onclick="saveMember()">Speichern</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="awards" class="tab-content">
+        <h1>Awards</h1>
+        <p class="subtitle">Sammle Seifenblasen!</p>
+        <div class="placeholder-card">🏆 Sauberkeits-König</div>
+        <div class="placeholder-card">🫧 10x in Folge gewaschen</div>
+      </section>
+
+      <section id="einstellungen" class="tab-content">
+        <h1>Einstellungen</h1>
+        <p class="subtitle">Konto & App verwalten</p>
+        <div class="user-info-box">
+            <p><strong>E-Mail:</strong> <span id="userEmail"></span></p>
+            <p><strong>User-ID:</strong> <span id="userId"></span></p>
+        </div>
+        <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 15px;">Profil bearbeiten</a>
+        <button id="logoutBtn" class="btn-primary">Abmelden</button>
+      </section>
+
+      <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('ueberblick')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span class="nav-text">Überblick</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('familie')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span class="nav-text">Familie</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('awards')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+          <span class="nav-text">Awards</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('einstellungen')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span class="nav-text">Einstellungen</span>
+        </div>
+      </nav>
+
     </div>
 
-    <button id="logoutBtn">Logout</button>
-
+    <script src="js/background.js"></script>
     <script src="js/protected.js"></script>
     <script src="js/logout.js"></script>
+    
+    <script>
+      function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+      }
+    </script>
   </body>
 </html>
