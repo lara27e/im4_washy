@@ -213,3 +213,71 @@ function addNewFamilyCard(name, role, emoji, color) {
   `;
   familyList.appendChild(newCard);
 }
+
+// ==========================================
+// 4. AWARDS / RANKING / FAMILIEN-ERFOLGE
+// ==========================================
+
+const awardsData = [
+  { name: "Fabienne", percent: 85, soap: 70 },
+  { name: "Lara", percent: 92, soap: 95 },
+  { name: "Sheryn", percent: 70, soap: 60 }
+];
+
+const rankingDiv = document.getElementById("familyRanking");
+
+if (rankingDiv) {
+  rankingDiv.innerHTML = "";
+
+  awardsData
+    .sort((a, b) => b.percent - a.percent)
+    .forEach((child, index) => {
+      let icon = "📈";
+      if (index === 0) icon = "🏆";
+      if (index === 1) icon = "⭐";
+
+      const item = document.createElement("p");
+      item.innerHTML = `${icon} ${index + 1}. ${child.name} — ${child.percent}% richtig Hände gewaschen`;
+      rankingDiv.appendChild(item);
+    });
+}
+
+const totalWashCount = document.getElementById("totalWashCount");
+const soapRate = document.getElementById("soapRate");
+const weeklySuccess = document.getElementById("weeklySuccess");
+
+if (totalWashCount && soapRate && weeklySuccess) {
+  const totalPercent = awardsData.reduce((sum, child) => sum + child.percent, 0);
+  const totalSoap = awardsData.reduce((sum, child) => sum + child.soap, 0);
+
+  totalWashCount.innerText = totalPercent;
+  soapRate.innerText = Math.round(totalSoap / awardsData.length) + "%";
+  weeklySuccess.innerText = Math.round(totalPercent / awardsData.length) + "%";
+}
+
+const observations = [
+  {
+    title: "Lara wäscht sehr häufig die Hände",
+    tip: "Super Gewohnheit! Weiter so!"
+  },
+  {
+    title: "Fabienne vergisst manchmal die Seife",
+    tip: "Vielleicht eine kleine Erinnerung am Waschbecken?"
+  },
+  {
+    title: "Sheryn braucht noch etwas Unterstützung",
+    tip: "Gemeinsames Händewaschen kann helfen"
+  }
+];
+
+const obsDiv = document.getElementById("observationsList");
+
+if (obsDiv) {
+  obsDiv.innerHTML = "";
+
+  observations.forEach(obs => {
+    const box = document.createElement("p");
+    box.innerHTML = `<strong>${obs.title}</strong><br><br>💡 Tipp: ${obs.tip}`;
+    obsDiv.appendChild(box);
+  });
+}

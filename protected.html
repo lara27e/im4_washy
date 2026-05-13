@@ -197,69 +197,28 @@
     </script>
 
     <script>
-// Beispiel-Daten (später durch echte Datenbankwerte ersetzen)
 
-const childrenData = [
-  { name: "Fabienne", score: 85, soap: 70 },
-  { name: "Lara", score: 92, soap: 95 },
-  { name: "Sherin", score: 70, soap: 60 }
-];
+<section id="awards" class="tab-content">
+  <h1>Awards</h1>
+  <p class="subtitle">Eure Familien-Erfolge</p>
 
-// =====================
-// RANKING (beste zuerst)
-// =====================
+  <div class="placeholder-card">
+    <h3>Ranking</h3>
+    <div id="familyRanking"></div>
+  </div>
 
-childrenData.sort((a, b) => b.score - a.score);
+  <div class="placeholder-card">
+    <h3>Familien-Erfolge</h3>
+    <p>Gesamte Händewaschungen: <span id="totalWashCount">0</span></p>
+    <p>Mit Seife: <span id="soapRate">0%</span></p>
+    <p>Wochenziel erreicht: <span id="weeklySuccess">0%</span></p>
+  </div>
 
-const rankingDiv = document.getElementById("familyRanking");
-
-childrenData.forEach((child, index) => {
-
-    let medal = "";
-    if(index === 0) medal = "🥇";
-    else if(index === 1) medal = "🥈";
-    else if(index === 2) medal = "🥉";
-
-    const item = document.createElement("p");
-    item.innerHTML = `${medal} ${child.name} — ${child.score} Punkte`;
-    rankingDiv.appendChild(item);
-});
-
-// =====================
-// FAMILIENSTATISTIK
-// =====================
-
-let totalScore = 0;
-let totalSoap = 0;
-
-childrenData.forEach(child => {
-    totalScore += child.score;
-    totalSoap += child.soap;
-});
-
-document.getElementById("totalWashCount").innerText = totalScore;
-document.getElementById("soapRate").innerText =
-    Math.round(totalSoap / childrenData.length) + "%";
-
-document.getElementById("weeklySuccess").innerText = "85%"; // Beispielwert
-
-// =====================
-// BEOBACHTUNGEN
-// =====================
-
-const observations = [
-    "Fabienne könnte öfter Seife benutzen.",
-    "Lara ist aktuell die Seifen-Queen!",
-    "Sherin verbessert sich stetig."
-];
-
-const obsDiv = document.getElementById("observationsList");
-
-observations.forEach(text => {
-    const p = document.createElement("p");
-    p.innerText = text;
-    obsDiv.appendChild(p);
-});
+  <div class="placeholder-card">
+    <h3>Beobachtungen</h3>
+    <div id="observationsList"></div>
+  </div>
+</section>
 
 </script>
 
