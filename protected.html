@@ -125,42 +125,103 @@
   <h1>🏆 Awards</h1>
   <p class="subtitle">Eure Familie rockt!</p>
 
-  <!-- RANKING -->
   <div class="placeholder-card" style="text-align:left;">
-
-    <h3>🥇 Ranking</h3>
+    <h3>Ranking</h3>
     <div id="familyRanking"></div>
-
   </div>
 
-  <!-- FAMILIENSTATISTIK -->
   <div class="placeholder-card" style="text-align:left;">
+    <h3>Familien-Erfolge</h3>
 
-    <h3>📊 Familien-Erfolge</h3>
-
-    <p><strong>Gesamte Händewaschungen:</strong> 
-       <span id="totalWashCount">0</span>
+    <p>
+      <strong>Gesamte Händewaschungen:</strong>
+      <span id="totalWashCount">0</span>
     </p>
 
-    <p><strong>Mit Seife:</strong> 
-       <span id="soapRate">0%</span>
+    <p>
+      <strong>Mit Seife:</strong>
+      <span id="soapRate">0%</span>
     </p>
 
-    <p><strong>Diese Woche Ziel erreicht:</strong> 
-       <span id="weeklySuccess">0%</span>
+    <p>
+      <strong>Diese Woche Ziel erreicht:</strong>
+      <span id="weeklySuccess">0%</span>
     </p>
-
   </div>
 
-  <!-- BEOBACHTUNGEN -->
   <div class="placeholder-card" style="text-align:left;">
-
-    <h3>👀 Beobachtungen</h3>
+    <h3>Beobachtungen</h3>
     <div id="observationsList"></div>
+  </div>
 
+  <!-- DETAILANSICHT KIND -->
+  <div id="childDetailModal" class="hidden">
+    <div class="detail-card">
+
+      <div class="detail-header">
+        <div class="detail-avatar" id="detailAvatar">🐬</div>
+        <h2 id="detailName">Lara</h2>
+        <p class="detail-motivation" id="detailMotivation">
+          Du machst das super, Lara!
+        </p>
+      </div>
+
+      <div class="detail-toggle">
+        <button type="button" id="todayBtn" class="active-toggle">Heute</button>
+        <button type="button" id="weekBtn">Diese Woche</button>
+      </div>
+
+      <div id="todayView">
+        <div class="detail-stat-box">
+          <h3 id="detailPercent">50% richtig Hände gewaschen</h3>
+        </div>
+
+        <div class="detail-table">
+          <h3>Zeittabelle</h3>
+
+          <div class="time-entry">
+            <span>09:00 Uhr</span>
+            <span>💧 🧼 ✅</span>
+          </div>
+
+          <div class="time-entry">
+            <span>12:30 Uhr</span>
+            <span>💧 ❌</span>
+          </div>
+
+          <div class="time-entry">
+            <span>18:00 Uhr</span>
+            <span>💧 🧼 ✅</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="weekView" class="hidden">
+        <div class="week-box">
+          <strong>Montag</strong><br>
+          3/3 richtig gewaschen<br>
+          Perfekt!
+        </div>
+
+        <div class="week-box">
+          <strong>Dienstag</strong><br>
+          2/4 richtig gewaschen<br>
+          Fast geschafft!
+        </div>
+
+        <div class="week-box">
+          <strong>Mittwoch</strong><br>
+          1/2 richtig gewaschen<br>
+          Nicht aufgeben, du schaffst das!
+        </div>
+      </div>
+
+    </div>
   </div>
 
 </section>
+
+  
 
       <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('ueberblick')">
@@ -195,32 +256,6 @@
         event.currentTarget.classList.add('active');
       }
     </script>
-
-    <script>
-
-<section id="awards" class="tab-content">
-  <h1>Awards</h1>
-  <p class="subtitle">Eure Familien-Erfolge</p>
-
-  <div class="placeholder-card">
-    <h3>Ranking</h3>
-    <div id="familyRanking"></div>
-  </div>
-
-  <div class="placeholder-card">
-    <h3>Familien-Erfolge</h3>
-    <p>Gesamte Händewaschungen: <span id="totalWashCount">0</span></p>
-    <p>Mit Seife: <span id="soapRate">0%</span></p>
-    <p>Wochenziel erreicht: <span id="weeklySuccess">0%</span></p>
-  </div>
-
-  <div class="placeholder-card">
-    <h3>Beobachtungen</h3>
-    <div id="observationsList"></div>
-  </div>
-</section>
-
-</script>
 
   </body>
 </html>

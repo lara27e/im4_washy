@@ -217,67 +217,117 @@ function addNewFamilyCard(name, role, emoji, color) {
 // ==========================================
 // 4. AWARDS / RANKING / FAMILIEN-ERFOLGE
 // ==========================================
+document.addEventListener("DOMContentLoaded", () => {
 
-const awardsData = [
-  { name: "Fabienne", percent: 85, soap: 70 },
-  { name: "Lara", percent: 92, soap: 95 },
-  { name: "Sheryn", percent: 70, soap: 60 }
-];
+  const awardsData = [
+    { name: "Fabienne", percent: 85, soap: 70, emoji: "🐢" },
+    { name: "Lara", percent: 92, soap: 95, emoji: "🐬" },
+    { name: "Sheryn", percent: 70, soap: 60, emoji: "🦭" }
+  ];
 
-const rankingDiv = document.getElementById("familyRanking");
+  const rankingDiv = document.getElementById("familyRanking");
 
-if (rankingDiv) {
-  rankingDiv.innerHTML = "";
+  if (rankingDiv) {
+    rankingDiv.innerHTML = "";
 
-  awardsData
-    .sort((a, b) => b.percent - a.percent)
-    .forEach((child, index) => {
-      let icon = "📈";
-      if (index === 0) icon = "🏆";
-      if (index === 1) icon = "⭐";
+    awardsData
+      .sort((a, b) => b.percent - a.percent)
+      .forEach((child, index) => {
+        let icon = "📈";
+        if (index === 0) icon = "🏆";
+        if (index === 1) icon = "⭐";
 
-      const item = document.createElement("p");
-      item.innerHTML = `${icon} ${index + 1}. ${child.name} — ${child.percent}% richtig Hände gewaschen`;
-      rankingDiv.appendChild(item);
-    });
-}
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "ranking-button";
+        item.innerHTML = `${icon} ${index + 1}. ${child.name} — ${child.percent}% richtig Hände gewaschen`;
 
-const totalWashCount = document.getElementById("totalWashCount");
-const soapRate = document.getElementById("soapRate");
-const weeklySuccess = document.getElementById("weeklySuccess");
+        item.addEventListener("click", () => {
+          const modal = document.getElementById("childDetailModal");
+          const detailName = document.getElementById("detailName");
+          const detailAvatar = document.getElementById("detailAvatar");
+          const detailMotivation = document.getElementById("detailMotivation");
+          const detailPercent = document.getElementById("detailPercent");
 
-if (totalWashCount && soapRate && weeklySuccess) {
-  const totalPercent = awardsData.reduce((sum, child) => sum + child.percent, 0);
-  const totalSoap = awardsData.reduce((sum, child) => sum + child.soap, 0);
+          if (!modal || !detailName || !detailAvatar || !detailMotivation || !detailPercent) {
+            console.error("Detailbereich fehlt im HTML");
+            return;
+          }
 
-  totalWashCount.innerText = totalPercent;
-  soapRate.innerText = Math.round(totalSoap / awardsData.length) + "%";
-  weeklySuccess.innerText = Math.round(totalPercent / awardsData.length) + "%";
-}
+          modal.classList.remove("hidden");
+          modal.style.display = "block";
 
-const observations = [
-  {
-    title: "Lara wäscht sehr häufig die Hände",
-    tip: "Super Gewohnheit! Weiter so!"
-  },
-  {
-    title: "Fabienne vergisst manchmal die Seife",
-    tip: "Vielleicht eine kleine Erinnerung am Waschbecken?"
-  },
-  {
-    title: "Sheryn braucht noch etwas Unterstützung",
-    tip: "Gemeinsames Händewaschen kann helfen"
+          detailName.innerText = child.name;
+          detailAvatar.innerText = child.emoji;
+          detailMotivation.innerText = `Du machst das super, ${child.name}!`;
+          detailPercent.innerText = `${child.percent}% richtig Hände gewaschen`;
+        });
+
+        rankingDiv.appendChild(item);
+      });
   }
-];
 
-const obsDiv = document.getElementById("observationsList");
+  const totalWashCount = document.getElementById("totalWashCount");
+  const soapRate = document.getElementById("soapRate");
+  const weeklySuccess = document.getElementById("weeklySuccess");
 
-if (obsDiv) {
-  obsDiv.innerHTML = "";
+  if (totalWashCount && soapRate && weeklySuccess) {
+    const totalPercent = awardsData.reduce((sum, child) => sum + child.percent, 0);
+    const totalSoap = awardsData.reduce((sum, child) => sum + child.soap, 0);
 
-  observations.forEach(obs => {
-    const box = document.createElement("p");
-    box.innerHTML = `<strong>${obs.title}</strong><br><br>💡 Tipp: ${obs.tip}`;
-    obsDiv.appendChild(box);
-  });
-}
+    totalWashCount.innerText = totalPercent;
+    soapRate.innerText = Math.round(totalSoap / awardsData.length) + "%";
+    weeklySuccess.innerText = Math.round(totalPercent / awardsData.length) + "%";
+  }
+
+  const observations = [
+    {
+      title: "Lara wäscht sehr häufig die Hände",
+      tip: "Super Gewohnheit! Weiter so!"
+    },
+    {
+      title: "Fabienne vergisst manchmal die Seife",
+      tip: "Vielleicht eine kleine Erinnerung am Waschbecken?"
+    },
+    {
+      title: "Sheryn braucht noch etwas Unterstützung",
+      tip: "Gemeinsames Händewaschen kann helfen"
+    }
+  ];
+
+  const obsDiv = document.getElementById("observationsList");
+
+  if (obsDiv) {
+    obsDiv.innerHTML = "";
+
+    observations.forEach(obs => {
+      const box = document.createElement("p");
+      box.innerHTML = `<strong>${obs.title}</strong><br><br>💡 Tipp: ${obs.tip}`;
+      obsDiv.appendChild(box);
+    });
+  }
+
+  const todayBtn = document.getElementById("todayBtn");
+  const weekBtn = document.getElementById("weekBtn");
+  const todayView = document.getElementById("todayView");
+  const weekView = document.getElementById("weekView");
+
+  if (todayBtn && weekBtn && todayView && weekView) {
+    todayBtn.addEventListener("click", () => {
+      todayView.classList.remove("hidden");
+      weekView.classList.add("hidden");
+
+      todayBtn.classList.add("active-toggle");
+      weekBtn.classList.remove("active-toggle");
+    });
+
+    weekBtn.addEventListener("click", () => {
+      weekView.classList.remove("hidden");
+      todayView.classList.add("hidden");
+
+      weekBtn.classList.add("active-toggle");
+      todayBtn.classList.remove("active-toggle");
+    });
+  }
+
+});
