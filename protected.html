@@ -121,22 +121,46 @@
       </section>
 
       <section id="awards" class="tab-content">
-        <h1>Awards</h1>
-        <p class="subtitle">Sammle Seifenblasen!</p>
-        <div class="placeholder-card">🏆 Sauberkeits-König</div>
-        <div class="placeholder-card">🫧 10x in Folge gewaschen</div>
-      </section>
 
-      <section id="einstellungen" class="tab-content">
-        <h1>Einstellungen</h1>
-        <p class="subtitle">Konto & App verwalten</p>
-        <div class="user-info-box">
-            <p><strong>E-Mail:</strong> <span id="userEmail"></span></p>
-            <p><strong>User-ID:</strong> <span id="userId"></span></p>
-        </div>
-        <a href="profil.html" class="btn-secondary" style="text-decoration: none; margin-bottom: 15px;">Profil bearbeiten</a>
-        <button id="logoutBtn" class="btn-primary">Abmelden</button>
-      </section>
+  <h1>🏆 Awards</h1>
+  <p class="subtitle">Eure Familie rockt!</p>
+
+  <!-- RANKING -->
+  <div class="placeholder-card" style="text-align:left;">
+
+    <h3>🥇 Ranking</h3>
+    <div id="familyRanking"></div>
+
+  </div>
+
+  <!-- FAMILIENSTATISTIK -->
+  <div class="placeholder-card" style="text-align:left;">
+
+    <h3>📊 Familien-Erfolge</h3>
+
+    <p><strong>Gesamte Händewaschungen:</strong> 
+       <span id="totalWashCount">0</span>
+    </p>
+
+    <p><strong>Mit Seife:</strong> 
+       <span id="soapRate">0%</span>
+    </p>
+
+    <p><strong>Diese Woche Ziel erreicht:</strong> 
+       <span id="weeklySuccess">0%</span>
+    </p>
+
+  </div>
+
+  <!-- BEOBACHTUNGEN -->
+  <div class="placeholder-card" style="text-align:left;">
+
+    <h3>👀 Beobachtungen</h3>
+    <div id="observationsList"></div>
+
+  </div>
+
+</section>
 
       <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('ueberblick')">
@@ -171,5 +195,73 @@
         event.currentTarget.classList.add('active');
       }
     </script>
+
+    <script>
+// Beispiel-Daten (später durch echte Datenbankwerte ersetzen)
+
+const childrenData = [
+  { name: "Fabienne", score: 85, soap: 70 },
+  { name: "Lara", score: 92, soap: 95 },
+  { name: "Sherin", score: 70, soap: 60 }
+];
+
+// =====================
+// RANKING (beste zuerst)
+// =====================
+
+childrenData.sort((a, b) => b.score - a.score);
+
+const rankingDiv = document.getElementById("familyRanking");
+
+childrenData.forEach((child, index) => {
+
+    let medal = "";
+    if(index === 0) medal = "🥇";
+    else if(index === 1) medal = "🥈";
+    else if(index === 2) medal = "🥉";
+
+    const item = document.createElement("p");
+    item.innerHTML = `${medal} ${child.name} — ${child.score} Punkte`;
+    rankingDiv.appendChild(item);
+});
+
+// =====================
+// FAMILIENSTATISTIK
+// =====================
+
+let totalScore = 0;
+let totalSoap = 0;
+
+childrenData.forEach(child => {
+    totalScore += child.score;
+    totalSoap += child.soap;
+});
+
+document.getElementById("totalWashCount").innerText = totalScore;
+document.getElementById("soapRate").innerText =
+    Math.round(totalSoap / childrenData.length) + "%";
+
+document.getElementById("weeklySuccess").innerText = "85%"; // Beispielwert
+
+// =====================
+// BEOBACHTUNGEN
+// =====================
+
+const observations = [
+    "Fabienne könnte öfter Seife benutzen.",
+    "Lara ist aktuell die Seifen-Queen!",
+    "Sherin verbessert sich stetig."
+];
+
+const obsDiv = document.getElementById("observationsList");
+
+observations.forEach(text => {
+    const p = document.createElement("p");
+    p.innerText = text;
+    obsDiv.appendChild(p);
+});
+
+</script>
+
   </body>
 </html>

@@ -640,3 +640,88 @@ button:active { transform: scale(0.98); }
 
 .member-card.purple { background-color: #f3e5f5; }
 .member-card.purple strong { color: #7b1fa2; }
+
+/* =========================
+   AWARDS SEITE
+========================= */
+
+#awards {
+  padding-bottom: 90px;
+}
+
+#awards h1 {
+  color: #9ad3ff;
+  margin-bottom: 5px;
+}
+
+#awards .subtitle {
+  color: #888;
+  margin-bottom: 20px;
+}
+
+/* Awards-Karten */
+#awards .placeholder-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 18px rgba(180, 221, 252, 0.25);
+  border: 1px solid #f0f4ff;
+}
+
+/* Überschriften in Karten */
+#awards h3 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  color: #666;
+  font-size: 17px;
+}
+
+/* Ranking */
+#familyRanking p {
+  background: linear-gradient(90deg, #B4DDFC, #ffd9e9);
+  color: #555;
+  padding: 12px 14px;
+  border-radius: 16px;
+  margin: 10px 0;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+/* Familien-Erfolge */
+#awards .placeholder-card p {
+  background: #f8f9fc;
+  border-radius: 14px;
+  padding: 11px 13px;
+  margin: 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+#awards .placeholder-card p strong {
+  color: #555;
+}
+
+#totalWashCount,
+#soapRate,
+#weeklySuccess {
+  color: #9ad3ff;
+  font-weight: 700;
+}
+
+/* Beobachtungen */
+#observationsList p {
+  background: #fff1f7;
+  border-left: 5px solid #ffd9e9;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* sanfter Button-/Card-Effekt */
+#awards .placeholder-card:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+}
