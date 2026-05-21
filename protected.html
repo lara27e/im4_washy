@@ -118,6 +118,41 @@
             </div>
           </div>
         </div>
+        
+        <!-- ══════════════════════════════════════════════════════════
+     BRACELET REGISTRIERUNGS-POPUP
+     Dieses Modal direkt VOR dem schliessenden </body> Tag
+     in protected.html einfügen.
+═══════════════════════════════════════════════════════════ -->
+
+<div id="braceletModal" class="modal-overlay hidden">
+  <div class="bracelet-modal-box waiting">
+    
+    <div class="bracelet-icon" id="braceletIcon">📡</div>
+    
+    <h2 class="bracelet-title">Armband verbinden</h2>
+    
+    <p class="bracelet-instruction">
+      Halte das Armband von <strong id="braceletKindName"></strong> 
+      für 5 Sekunden auf den NFC-Reader des Geräts.
+    </p>
+
+    <div class="bracelet-status-row">
+      <span id="braceletStatus">Warte auf Chip...</span>
+      <span class="bracelet-timer" id="braceletCountdown">30s</span>
+    </div>
+
+    <div class="bracelet-progress-bar">
+      <div class="bracelet-progress-fill" id="braceletProgressFill"></div>
+    </div>
+
+    <button class="btn-cancel" onclick="closeBraceletModal()" style="margin-top: 20px; width: 100%;">
+      Abbrechen
+    </button>
+
+  </div>
+</div>
+
       </section>
 
       <section id="awards" class="tab-content">
@@ -219,6 +254,38 @@
     </div>
   </div>
 
+</section>
+
+<!-- EINSTELLUNGEN TAB -->
+<section id="einstellungen" class="tab-content">
+  <h2>Einstellungen</h2>
+  <p class="subtitle">Verwalte dein Konto und dein Gerät</p>
+
+  <!-- User Info Karte -->
+  <div class="user-info-box" style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+    <p style="margin: 5px 0;"><strong>E-Mail:</strong> <span id="userEmail">Lädt...</span></p>
+    <p style="margin: 5px 0;"><strong>Haushalts-ID:</strong> <span id="userId">Lädt...</span></p>
+  </div>
+  
+  <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 12px;">
+
+    <div class="section-title" style="margin-top: 20px;">Geräte-Info</div>
+    <div class="activity-item">
+      <div class="activity-icon" style="background-color: #eef2ff;">📱</div>
+      <div class="activity-info">
+        <p class="activity-fulltext"><strong>Koppelung</strong></p>
+        <p class="activity-time">Status: Aktiv</p>
+      </div>
+    </div>
+    <!-- Der neue Button zum Profil -->
+    <button class="btn-primary" onclick="window.location.href='profil.html'" style="width: 100%;">
+      Profil bearbeiten
+    </button>
+    <!-- Abmelden Button ganz unten -->
+    <button class="btn-secondary" id="logoutBtn" style="margin-top: 5px;">
+      Abmelden
+    </button>
+  </div>
 </section>
 
   

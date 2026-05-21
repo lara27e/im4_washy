@@ -845,3 +845,99 @@ button:active { transform: scale(0.98); }
 .ranking-button:active {
   transform: scale(0.98);
 }
+
+  /* Bracelet Modal */
+  .bracelet-modal-box {
+    background: white;
+    border-radius: 20px;
+    padding: 32px 24px;
+    max-width: 340px;
+    width: 90%;
+    margin: auto;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    transition: border 0.3s;
+    border: 3px solid transparent;
+  }
+
+  /* Zustände */
+  .bracelet-modal-box.waiting { border-color: #a0b4ff; }
+  .bracelet-modal-box.success { border-color: #4caf50; }
+  .bracelet-modal-box.timeout { border-color: #ff9800; }
+  .bracelet-modal-box.error   { border-color: #f44336; }
+
+  .bracelet-icon {
+    font-size: 52px;
+    margin-bottom: 12px;
+    animation: pulse 1.5s infinite;
+  }
+
+  .bracelet-modal-box.success .bracelet-icon,
+  .bracelet-modal-box.timeout .bracelet-icon,
+  .bracelet-modal-box.error   .bracelet-icon {
+    animation: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.12); }
+  }
+
+  .bracelet-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #222;
+  }
+
+  .bracelet-instruction {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .bracelet-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    color: #444;
+    margin-bottom: 8px;
+  }
+
+  .bracelet-timer {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #a0b4ff;
+  }
+
+  .bracelet-modal-box.timeout .bracelet-timer,
+  .bracelet-modal-box.error   .bracelet-timer { color: #f44336; }
+  .bracelet-modal-box.success .bracelet-timer { color: #4caf50; }
+
+  /* Fortschrittsbalken */
+  .bracelet-progress-bar {
+    background: #eee;
+    border-radius: 8px;
+    height: 6px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  .bracelet-progress-fill {
+    height: 100%;
+    width: 100%;
+    background: #a0b4ff;
+    border-radius: 8px;
+    animation: countdown 30s linear forwards;
+  }
+
+  .bracelet-modal-box.success .bracelet-progress-fill { background: #4caf50; animation: none; width: 100%; }
+  .bracelet-modal-box.timeout .bracelet-progress-fill { background: #ff9800; animation: none; width: 0%; }
+  .bracelet-modal-box.error   .bracelet-progress-fill { background: #f44336; animation: none; width: 0%; }
+
+  @keyframes countdown {
+    from { width: 100%; }
+    to   { width: 0%; }
+  }
