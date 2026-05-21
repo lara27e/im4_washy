@@ -15,17 +15,63 @@ $emojiMapping   = [1 => '🐢', 2 => '🐬', 3 => '🦭', 4 => '🦈', 5 => '�
 $reverseMapping = ['🐢' => 1, '🐬' => 2, '🦭' => 3, '🦈' => 4, '🐧' => 5, '🐙' => 6];
 
 // ══════════════════════════════════════════════════════════════
-// FALL 1: DATEN LADEN (GET)
+// FALL 1: DATEN LADEN (GET) INKLUSIVE SENSORDATA & AKTIVITÄTEN
 // ══════════════════════════════════════════════════════════════
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
-        $stmt = $pdo->prepare("SELECT * FROM family_members WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // 1. Familienmitglieder & Statistiken laden
+        $sqlMembers = "
+            SELECT 
+                f.*,
+                COUNT(CASE WHEN DATE(s.time) = CURDATE() AND s.erfolg = 1 THEN 1 END) as heute_erfolg,
+                COUNT(CASE WHEN DATE(s.time) = CURDATE() THEN 1 END) as heute_gesamt,
+                COUNT(CASE WHEN YEARWEEK(s.time, 1) = YEARWEEK(CURDATE(), 1) AND s.erfolg = 1 THEN 1 END) as woche_erfolg,
+                COUNT(CASE WHEN YEARWEEK(s.time, 1) = YEARWEEK(CURDATE(), 1) THEN 1 END) as woche_gesamt,
+                COUNT(CASE WHEN YEARWEEK(s.time, 1) = YEARWEEK(CURDATE(), 1) AND s.erfolg = 0 THEN 1 END) as vergessen_woche,
+                COUNT(CASE WHEN s.erfolg = 1 THEN 1 END) as lifetime_erfolg,
+                COUNT(CASE WHEN s.seife = 1 THEN 1 END) as lifetime_seife,
+                COUNT(s.id) as lifetime_gesamt
+            FROM family_members f
+            LEFT JOIN sensordata s ON f.bracelet = s.kind
+            WHERE f.user_id = ?
+            GROUP BY f.id
+        ";
+        $stmtM = $pdo->prepare($sqlMembers);
+        $stmtM->execute([$user_id]);
+        $members = $stmtM->fetchAll(PDO::FETCH_ASSOC);
+        
         foreach ($members as &$m) {
             $m['emoji'] = $emojiMapping[$m['icon']] ?? '❓';
         }
-        echo json_encode($members);
+
+        // 2. Die 5 neuesten Aktivitäten für den Live-Feed laden
+        $sqlActivities = "
+            SELECT 
+                s.erfolg, 
+                s.time, 
+                f.name, 
+                f.color, 
+                f.icon 
+            FROM sensordata s
+            JOIN family_members f ON s.kind = f.bracelet
+            WHERE f.user_id = ?
+            ORDER BY s.time DESC
+            LIMIT 5
+        ";
+        $stmtA = $pdo->prepare($sqlActivities);
+        $stmtA->execute([$user_id]);
+        $activities = $stmtA->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($activities as &$act) {
+            $act['emoji'] = $emojiMapping[$act['icon']] ?? '✨';
+        }
+        
+        // Senden des kombinierten Pakets
+        echo json_encode([
+            "members" => $members,
+            "activities" => $activities
+        ]);
+
     } catch (PDOException $e) {
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
     }
@@ -44,8 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $iconId = $reverseMapping[$emoji] ?? 1;
 
     try {
-        // Kind speichern – bracelet NULL, register_pending = 1
-        // damit der Arduino weiss dass er auf einen Chip warten soll
         $sql  = "INSERT INTO family_members (role, name, color, icon, bracelet, register_pending, user_id) 
                  VALUES (?, ?, ?, ?, NULL, 1, ?)";
         $stmt = $pdo->prepare($sql);
@@ -65,9 +109,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ══════════════════════════════════════════════════════════════
-// FALL 3: CHIP-VERBINDUNG LÖSEN (DELETE)
-// Setzt bracelet auf NULL und register_pending auf 0
-// Der Chip kann danach einem neuen Kind zugewiesen werden
+// FALL 3: MITGLIED BEARBEITEN (PUT)
+// ══════════════════════════════════════════════════════════════
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+    $data   = json_decode(file_get_contents("php://input"), true);
+    $id     = $data['id']    ?? null;
+    $name   = trim($data['name']  ?? '');
+    $role   = trim($data['role']  ?? 'Kind');
+    $color  = trim($data['color'] ?? 'pink');
+    $emoji  = $data['emoji'] ?? '';
+    $iconId = $reverseMapping[$emoji] ?? 1;
+
+    if (!$id) {
+        echo json_encode(["status" => "error", "message" => "Fehlende Mitglied-ID"]);
+        exit;
+    }
+
+    try {
+        $sql  = "UPDATE family_members 
+                 SET role = ?, name = ?, color = ?, icon = ? 
+                 WHERE id = ? AND user_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$role, $name, $color, $iconId, $id, $user_id]);
+
+        echo json_encode([
+            "status"  => "success",
+            "message" => "Mitglied erfolgreich aktualisiert"
+        ]);
+    } catch (PDOException $e) {
+        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+    }
+    exit;
+}
+
+// ══════════════════════════════════════════════════════════════
+// FALL 4: MITGLIED VOLLSTÄNDIG LÖSCHEN (DELETE)
 // ══════════════════════════════════════════════════════════════
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $data    = json_decode(file_get_contents("php://input"), true);
@@ -82,19 +158,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         $stmt = $pdo->prepare("SELECT id FROM family_members WHERE id = ? AND user_id = ?");
         $stmt->execute([$kind_id, $user_id]);
         if (!$stmt->fetch()) {
-            echo json_encode(["status" => "error", "message" => "Kind nicht gefunden"]);
+            echo json_encode(["status" => "error", "message" => "Mitglied nicht gefunden oder keine Berechtigung"]);
             exit;
         }
 
-        // Chip lösen: bracelet = NULL, pending = 0
-        $stmt = $pdo->prepare("
-            UPDATE family_members 
-            SET bracelet = NULL, register_pending = 0 
-            WHERE id = ?
-        ");
+        $stmt = $pdo->prepare("DELETE FROM family_members WHERE id = ?");
         $stmt->execute([$kind_id]);
-
-        echo json_encode(["status" => "success", "message" => "Chip-Verbindung gelöst"]);
+        
+        echo json_encode(["status" => "success", "message" => "Mitglied erfolgreich gelöscht"]);
 
     } catch (PDOException $e) {
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
