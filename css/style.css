@@ -747,6 +747,93 @@ button:active { transform: scale(0.98); }
   font-size: 14px;
 }
 
+/* ========================================= */
+/* DETAILANSICHT KIND (POP-UP MODAL)         */
+/* ========================================= */
+
+#childDetailModal {
+  background-color: rgba(0, 0, 0, 0.4); /* Sanfte Abdunklung des Hintergrunds */
+}
+
+.detail-header {
+  text-align: center;
+}
+
+.detail-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #B4DDFC;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 38px;
+  margin: 0 auto 10px auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.detail-motivation {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.detail-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.detail-toggle button {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f3f3f3;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.active-toggle {
+  background: #B4DDFC !important;
+  color: white;
+}
+
+.detail-stat-box {
+  background: #f0f4ff;
+  padding: 15px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.detail-table {
+  background: #fff7fb;
+  padding: 15px;
+  border-radius: 16px;
+}
+
+.time-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+}
+
+.time-entry:last-child {
+  border-bottom: none;
+}
+
+.week-box {
+  background: #f8f9fc;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
 /* DETAILANSICHT */
 
 .detail-card{
