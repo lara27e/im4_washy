@@ -118,6 +118,41 @@
             </div>
           </div>
         </div>
+        
+        <!-- ══════════════════════════════════════════════════════════
+     BRACELET REGISTRIERUNGS-POPUP
+     Dieses Modal direkt VOR dem schliessenden </body> Tag
+     in protected.html einfügen.
+═══════════════════════════════════════════════════════════ -->
+
+<div id="braceletModal" class="modal-overlay hidden">
+  <div class="bracelet-modal-box waiting">
+    
+    <div class="bracelet-icon" id="braceletIcon">📡</div>
+    
+    <h2 class="bracelet-title">Armband verbinden</h2>
+    
+    <p class="bracelet-instruction">
+      Halte das Armband von <strong id="braceletKindName"></strong> 
+      für 5 Sekunden auf den NFC-Reader des Geräts.
+    </p>
+
+    <div class="bracelet-status-row">
+      <span id="braceletStatus">Warte auf Chip...</span>
+      <span class="bracelet-timer" id="braceletCountdown">30s</span>
+    </div>
+
+    <div class="bracelet-progress-bar">
+      <div class="bracelet-progress-fill" id="braceletProgressFill"></div>
+    </div>
+
+    <button class="btn-cancel" onclick="closeBraceletModal()" style="margin-top: 20px; width: 100%;">
+      Abbrechen
+    </button>
+
+  </div>
+</div>
+
       </section>
 
       <section id="awards" class="tab-content">
