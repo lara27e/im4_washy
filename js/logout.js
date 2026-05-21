@@ -1,25 +1,32 @@
 // logout.js
-document.getElementById("logoutBtn").addEventListener("click", async (e) => {
-  // Prevent the default button behavior
-  e.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+  const logoutBtn = document.getElementById("logoutBtn");
 
-  try {
-    const response = await fetch("api/logout.php", {
-      method: "GET",
-      credentials: "include",
+  // Sicherheits-Check: Nur ausführen, wenn der Button auf der Seite gefunden wird
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async (e) => {
+      // Standard-Verhalten des Buttons verhindern
+      e.preventDefault();
+
+      try {
+        const response = await fetch("api/logout.php", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          // Nach erfolgreichem Logout zur Login-Seite weiterleiten
+          window.location.href = "login.html";
+        } else {
+          console.error("Logout failed");
+          alert("Logout fehlgeschlagen. Bitte erneut versuchen.");
+        }
+      } catch (error) {
+        console.error("Logout error:", error);
+        alert("Beim Logout ist etwas schiefgelaufen!");
+      }
     });
-
-    const result = await response.json();
-
-    if (result.status === "success") {
-      // Redirect to login page after successful logout
-      window.location.href = "login.html";
-    } else {
-      console.error("Logout failed");
-      alert("Logout failed. Please try again.");
-    }
-  } catch (error) {
-    console.error("Logout error:", error);
-    alert("Something went wrong during logout!");
   }
 });
