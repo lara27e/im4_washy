@@ -1,0 +1,324 @@
+#include <Wire.h>
+#include <Adafruit_PN532.h>
+#include <Adafruit_NeoPixel.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <Arduino_JSON.h>
+
+// ── WiFi ─────────────────────────────────────────────────────────────────────
+const char* WIFI_SSID     = "tinkergarden";
+const char* WIFI_PASSWORD = "strenggeheim";
+
+// ── API URL ───────────────────────────────────────────────────────────────────
+// Passe die URL auf euren Server an
+const char* API_URL = "https://im4washy.laraeberhard.ch/api/load.php";
+const char* API_CHECK_URL = "https://im4washy.laraeberhard.ch/api/check_chip.php";
+
+const char* SERIAL_NUMBER = "SN-12345678";
+
+// ── Pins ─────────────────────────────────────────────────────────────────────
+#define NEOPIXEL_PIN    20   // NeoPixel Ring Datenleitung
+#define NUM_PIXELS      12   // Anzahl LEDs im Ring
+#define SDA_PIN          6   // NFC Reader I2C Datenleitung
+#define SCL_PIN          7   // NFC Reader I2C Taktleitung
+#define BUTTON_PIN      18   // Druckknopf Station 1 (Seife)
+#define RAIN_PIN         4   // Regensensor Station 2 (Wasser), ADC-fähig
+
+// ── Regensensor Schwellwert ───────────────────────────────────────────────────
+// ESP32-C6 ADC: 0 = nass, 4095 = trocken
+// Sensor meldet NASS wenn Wert UNTER diesem Schwellwert liegt.
+#define RAIN_THRESHOLD  800
+
+// ── Timer: 3 Minuten ─────────────────────────────────────────────────────────
+#define SESSION_DURATION_MS  (1UL * 60UL * 1000UL)   // 1 Minute
+
+// ── Objekte ──────────────────────────────────────────────────────────────────
+Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_PN532    nfc(SDA_PIN, SCL_PIN);
+
+// ── Zustandsvariablen ─────────────────────────────────────────────────────────
+bool     sessionActive = false;   // Läuft gerade ein Waschgang?
+bool     soapDone      = false;   // Wurde Seife gedrückt?
+bool     waterDone     = false;   // Waren Hände nass?
+bool     resultSent    = false;   // Wurde Ergebnis gesendet?
+uint32_t sessionStart  = 0;       // Zeitpunkt des NFC-Scans in Millisekunden
+String   currentChildID = "";     // NFC Tag ID, leer am Anfang
+
+// ── Druckknopf ───────────────────────────────────────────────────────────────
+int buttonState      = 0;         // Aktueller Zustand des Knopfs
+int prev_buttonState = 0;         // Zustand des Knopfs im letzten loop()-Durchlauf
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LEDs
+// ═══════════════════════════════════════════════════════════════════════════════
+void setAllLEDs(uint8_t r, uint8_t g, uint8_t b) {
+  for (int i = 0; i < NUM_PIXELS; i++)
+    ring.setPixelColor(i, ring.Color(r, g, b));
+  ring.show();
+}
+void ledsOff()   { setAllLEDs(0,   0,   0); }    // Alles 0 = aus
+void ledsWhite() { setAllLEDs(180, 180, 180); }   // R+G+B gleich = weiss
+void ledsGreen() { setAllLEDs(0,   180, 0); }     // Nur Grün = Erfolg
+void ledsRed()   { setAllLEDs(180, 0,   0); }     // Nur Rot = Misserfolg
+void ledsBlue()  { setAllLEDs(0, 0, 180); }    // Nur Blau = Chip neu registriert
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NFC
+// ═══════════════════════════════════════════════════════════════════════════════
+String readNFCTag() {
+  uint8_t uid[7], uidLength;
+  if (!nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength, 100))
+    return "";
+  String s = "";
+  for (uint8_t i = 0; i < uidLength; i++) {
+    if (uid[i] < 0x10) s += "0";
+    s += String(uid[i], HEX);
+  }
+  s.toUpperCase();
+  return s;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// API – Ergebnis an load.php senden
+// Felder passend zu load.php: kind, seife, wasser, erfolg
+// ═══════════════════════════════════════════════════════════════════════════════
+void sendResult(bool erfolg, bool seife, bool wasser) {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("[API] Kein WLAN – Ergebnis kann nicht gesendet werden.");
+    return;
+  }
+
+  // JSON zusammenbauen – Feldnamen exakt wie in load.php erwartet
+  JSONVar sensorDataObject;
+  sensorDataObject["kind"]   = currentChildID;   // NFC Tag ID
+  sensorDataObject["seife"]  = seife  ? 1 : 0;  // 1 = Seife verwendet,     0 = nicht
+  sensorDataObject["wasser"] = wasser ? 1 : 0;  // 1 = Wasser verwendet,    0 = nicht
+  sensorDataObject["erfolg"] = erfolg ? 1 : 0;  // 1 = Waschgang erfolgreich, 0 = nicht
+
+  String body = JSON.stringify(sensorDataObject);
+
+  Serial.println("[API] Sende: " + body);
+
+  HTTPClient http;
+  http.begin(API_URL);
+  http.addHeader("Content-Type", "application/json");
+
+  int httpCode = http.POST(body);
+  Serial.printf("[API] HTTP Antwort: %d\n", httpCode);
+  if (httpCode > 0) {
+    Serial.println("[API] Server: " + http.getString());
+  } else {
+    Serial.println("[API] Fehler: " + http.errorToString(httpCode));
+  }
+  http.end();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Session
+// ═══════════════════════════════════════════════════════════════════════════════
+void startSession(String uid) {
+  currentChildID   = uid;
+  sessionActive    = true;
+  soapDone         = false;
+  waterDone        = false;
+  resultSent       = false;
+  sessionStart     = millis();  // Timer starten
+  prev_buttonState = 0;         // Knopfzustand zurücksetzen
+
+  Serial.println("[SESSION] Gestartet – Kind: " + uid);
+  Serial.println("[SESSION] Timer läuft (1 Minuten)...");
+
+  ledsWhite();   // Ring leuchtet WEISS nach Einstempeln
+}
+
+void endSession(bool success) {
+  if (resultSent) return;      // Verhindert doppeltes Ausführen
+  resultSent = true;
+
+  Serial.println("─────────────────────────────────");
+  Serial.println("[ERGEBNIS] Händewaschen beendet");
+  Serial.println("  Erfolgreich : " + String(success   ? "JA" : "NEIN"));
+  Serial.println("  Seife       : " + String(soapDone  ? "JA" : "NEIN"));
+  Serial.println("  Feuchtigkeit: " + String(waterDone ? "JA" : "NEIN"));
+
+  if (!success) {
+    Serial.print("  Fehler: ");
+    if (!soapDone && !waterDone) Serial.println("seife, feuchtigkeit");
+    else if (!soapDone)          Serial.println("seife");
+    else                         Serial.println("feuchtigkeit");
+  }
+  Serial.println("─────────────────────────────────");
+
+  if (success) {
+    ledsGreen();   // Erfolg → GRÜN
+  } else {
+    ledsRed();     // Misserfolg → ROT
+  }
+  delay(5000);
+  ledsOff();       // Nach 5 Sekunden immer aus
+
+  sendResult(success, soapDone, waterDone);   // Daten an Server schicken
+
+  sessionActive  = false;
+  currentChildID = "";
+  Serial.println("[SYSTEM] Bereit – bitte NFC-Tag scannen.");
+}
+
+bool checkForExistingUser(String chip_uid){
+
+  String status;
+
+  JSONVar dataObject;
+  dataObject["serial"] = SERIAL_NUMBER;
+  dataObject["bracelet"] = chip_uid;
+  String jsonString = JSON.stringify(dataObject);
+  
+  HTTPClient http;
+  http.begin(API_CHECK_URL);
+  http.addHeader("Content-Type", "application/json");
+
+  int httpResponseCode = http.POST(jsonString);
+  Serial.printf("[API] HTTP Antwort: %d\n", httpResponseCode);
+  if (httpResponseCode > 0) { 
+
+    String response = http.getString();
+
+    Serial.println("[API] Server: " + response);
+
+    JSONVar responseObject = JSON.parse(response);
+
+    if (JSON.typeof(responseObject) == "undefined") {
+        Serial.println("Failed to parse JSON response");
+    }
+
+    status = (const char*) responseObject["status"];
+
+  } else {
+    Serial.println("[API] Fehler: " + http.errorToString(httpResponseCode));
+  }
+  http.end();
+
+  if(status == "neu"){
+    return false;
+  } else if (status == "bekannt"){
+    return true;
+  } else {
+    Serial.println("fehler");
+    return false;
+  }
+
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// setup() – läuft einmal beim Start
+// ═══════════════════════════════════════════════════════════════════════════════
+void setup() {
+  Serial.begin(115200);
+  delay(500);
+  Serial.println("\n=== Händewaschen Prototyp ===");
+
+  pinMode(BUTTON_PIN, INPUT_PULLDOWN);   // HIGH wenn gedrückt, LOW wenn los
+
+  ring.begin();
+  ring.setBrightness(80);
+  ledsOff();   // Ring aus beim Start
+
+  Wire.begin(SDA_PIN, SCL_PIN);
+  nfc.begin();
+  if (!nfc.getFirmwareVersion()) {
+    Serial.println("[NFC] PN532 nicht gefunden – Verkabelung prüfen!");
+    while (1) { delay(1000); }
+  }
+  nfc.SAMConfig();
+  Serial.println("[NFC] PN532 bereit.");
+
+  // WiFi verbinden
+  Serial.printf("[WLAN] Verbinde mit %s", WIFI_SSID);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  uint8_t tries = 0;
+  while (WiFi.status() != WL_CONNECTED && tries < 20) {
+    delay(500);
+    Serial.print(".");
+    tries++;
+  }
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\n[WLAN] Verbunden. IP: " + WiFi.localIP().toString());
+  } else {
+    Serial.println("\n[WLAN] Nicht verbunden – weiter im Offline-Modus.");
+  }
+
+  Serial.println("[SYSTEM] Bereit – bitte NFC-Tag scannen.");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// loop() – läuft endlos
+// ═══════════════════════════════════════════════════════════════════════════════
+void loop() {
+
+  // ── Warten auf NFC ──────────────────────────────────────────────────────────
+  if (!sessionActive) {
+    String uid = readNFCTag();
+    if (uid != "") {
+      Serial.println("[NFC] Tag erkannt: " + uid);
+
+      if(checkForExistingUser(uid)){
+        startSession(uid);
+      } else {
+        Serial.println("[NFC] Chip neu registriert → blau leuchten");
+        ledsBlue();
+        delay(5000);
+        return;
+      }
+    }
+    return;
+  }
+
+ // ── Timer prüfen ────────────────────────────────────────────────────────────
+  uint32_t elapsed = millis() - sessionStart;
+  if (elapsed >= SESSION_DURATION_MS) {
+    Serial.println("[TIMER] Zeit abgelaufen!");
+    endSession(soapDone && waterDone);
+    return;
+  }
+
+  // ── Status alle 10 Sek. anzeigen ────────────────────────────────────────────
+  static uint32_t lastPrint = 0;
+  if (millis() - lastPrint > 10000) {
+    uint32_t remaining = (SESSION_DURATION_MS - elapsed) / 1000;
+    Serial.printf("[TIMER] Noch %d Sek | Seife: %s | Wasser: %s\n",
+      remaining,
+      soapDone  ? "JA" : "nein",
+      waterDone ? "JA" : "nein");
+    lastPrint = millis();
+  }
+
+  // ── Station 1: Druckknopf (Seife) ───────────────────────────────────────────
+  if (!soapDone) {
+    buttonState = digitalRead(BUTTON_PIN);
+    if (buttonState != prev_buttonState) {        // Zustand hat sich verändert
+      prev_buttonState = buttonState;
+      if (buttonState == 1) {                     // 1 = gedrückt
+        soapDone = true;
+        Serial.println("[SEIFE] Druckknopf gedrückt → seife = 1");
+      }
+    }
+  }
+
+  // ── Station 2: Regensensor (Wasser) ─────────────────────────────────────────
+  if (!waterDone) {
+    int rainValue = analogRead(RAIN_PIN);
+    if (rainValue < RAIN_THRESHOLD) {
+      waterDone = true;
+      Serial.println("[WASSER] Nass erkannt → wasser = 1");
+    }
+  }
+
+  // ── Beide Stationen erfüllt → sofortiger Erfolg ─────────────────────────────
+  if (soapDone && waterDone) {
+    Serial.println("[SESSION] Beide Stationen erfüllt!");
+    endSession(true);
+    return;
+  }
+
+  delay(50);
+}
