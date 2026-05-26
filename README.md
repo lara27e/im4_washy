@@ -39,13 +39,129 @@ Dadurch werden Eltern entlastet, die Hygiene im Alltag verbessert und das Risiko
 #### Installationsanleitung WebApp
 
 ***verständliche** Schritt-für-Schritt-Anleitung für Aussenstehende, um das Projekt zu klonen und auf einem eigenen Server zu installieren*
+Washy – Installationsanleitung
+Diese Anleitung erklärt Schritt für Schritt, wie das Projekt geklont und auf einem eigenen Server installiert wird.
 
-1. *Was benötige ich an Infrastruktur?*
-2. *Was muss ich auf meinem Webserver installieren?*  
-3. *Wie kann ich die Datenbank importieren?*  
-4. *Wo muss ich die DB-Credentials eintragen?*  
-5. *…*  
-6. *Wie nehme ich das physische Artefakt in Betrieb?*
+1. Benötigte Infrastruktur
+Folgende Komponenten werden benötigt:
+  Software / Server:
+    Webserver mit PHP 8.0 oder neuer
+    MySQL- oder MariaDB-Datenbank
+    FTP-Client (z.B. FileZilla) zum Hochladen der Dateien
+    Git (optional, zum Klonen des Repositories)
+
+  Hardware (physisches Gerät):
+    ESP32-C6 Mikrocontroller
+    NeoPixel Ring mit 12 LEDs 
+    PN532 NFC-Reader
+    Druckknopf
+    Regensensor (mit AO-Ausgang)
+    Arduino IDE zum Flashen des ESP32
+
+2. Webserver einrichten
+Der Webserver benötigt folgende Voraussetzungen:
+  PHP 8.0+ mit aktivierten Extensions: pdo, pdo_mysql, json, session
+  MySQL / MariaDB Datenbank
+
+3. Wie kann ich die Datenbank importieren?*
+Schritt 1: In phpMyAdmin einloggen und eine neue Datenbank erstellen:
+  CREATE DATABASE im4_washy
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+Schritt 2: Folgende Tabellen anlegen. Dazu im SQL-Tab von phpMyAdmin diesen Code ausführen:
+CREATE TABLE users (
+  id        INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  email     VARCHAR(255) NOT NULL UNIQUE,
+  password  VARCHAR(255) NOT NULL,
+  firstname VARCHAR(100),
+  lastname  VARCHAR(100),
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE devices (
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id       INT UNSIGNED NOT NULL,
+  serial_number VARCHAR(50)  NOT NULL UNIQUE,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE family_members (
+  id               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  role             VARCHAR(50)  NOT NULL DEFAULT 'Kind',
+  name             VARCHAR(100) NOT NULL,
+  color            VARCHAR(50),
+  icon             INT,
+  bracelet         VARCHAR(50)  DEFAULT NULL,
+  register_pending TINYINT(1)   DEFAULT 0,
+  user_id          INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE sensordata (
+  id     INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  kind   VARCHAR(50),
+  seife  TINYINT(1)   DEFAULT 0,
+  wasser TINYINT(1)   DEFAULT 0,
+  erfolg TINYINT(1)   DEFAULT 0,
+  time   DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+5. Datenbank-Zugangsdaten eintragen
+Die Datei system/config.php öffnen und die Zugangsdaten anpassen:
+
+<?php
+$host     = 'localhost';
+$dbname   = 'im4_washy';
+$username = 'DEIN_DB_USER';
+$password = 'DEIN_DB_PASSWORT';
+
+$pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+?>
+
+Diese Datei enthält sensible Daten und sollte nie in ein öffentliches Git-Repository hochgeladen werden.
+
+6. Physisches Gerät in Betrieb nehmen
+6a. Arduino IDE vorbereiten
+In der Arduino IDE folgende Libraries installieren (über Sketch → Include Library → Manage Libraries):
+
+Adafruit NeoPixel by Adafruit
+Adafruit PN532 by Adafruit
+Arduino_JSON by Arduino
+
+Ausserdem den ESP32-C6 als Board installieren:
+
+File → Preferences → Additional Boards Manager URLs folgende URL einfügen:
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+
+Danach unter Tools → Board → Boards Manager nach esp32 suchen und installieren
+Board auswählen: ESP32C6 Dev Module
+
+6b. Code anpassen
+Die Datei haendewaschen.ino öffnen und folgende Zeilen anpassen:
+const char* WIFI_SSID     = "DEIN_WLAN_NAME";
+const char* WIFI_PASSWORD = "DEIN_WLAN_PASSWORT";
+const char* SERIAL_NUMBER = "SN-XXXXXXXX";   // Einmalige Seriennummer für dieses Gerät
+const char* API_URL       = "https://deine-domain.ch/api/load.php";
+const char* API_CHECK_URL = "https://deine-domain.ch/api/check_chip.php";
+
+6c. Verkabelung -> Siehe Steckplan
+
+6d. Code hochladen
+ESP32-C6 via USB mit dem Computer verbinden
+In der Arduino IDE unter Tools → Port den richtigen Port auswählen
+Upload drücken (Pfeil-Symbol)
+Serial Monitor öffnen (115200 Baud) um zu prüfen ob WLAN-Verbindung und NFC funktionieren
+
+7. Erstgebrauch in der App
+App aufrufen und Konto erstellen (Register)
+Unter Einstellungen die Seriennummer des Geräts eingeben (z.B. SN-12345678) um das Gerät mit dem Konto zu verknüpfen
+Unter Familie Kind hinzufügen — danach erscheint ein Popup das auffordert, das Armband ans Gerät zu halten
+Armband 5 Sekunden auf den NFC-Reader halten → Ring leuchtet blau als Bestätigung
+Ab jetzt kann das Kind durch Draufhalten des Armbands einen Waschgang starten
 
 #### Bauanleitung Physical Computing
 

@@ -1,0 +1,50 @@
+# Bauanleitung Physical Computing
+
+## Komponentenplan – Beschreibung
+
+### Eingesetzte Komponenten
+
+Das physische Gerät basiert auf einem **ESP32-C6 Mikrocontroller**, der als zentrale Steuereinheit fungiert. Er übernimmt die Verarbeitung aller Sensordaten, steuert die LEDs an und kommuniziert über WLAN mit dem Server. Der ESP32-C6 wird mit dem Programm **haendewaschen.ino** bespielt, das in der Arduino IDE geschrieben und via USB auf den Mikrocontroller übertragen wird.
+
+Auf der Serverseite läuft eine **MySQL-Datenbank** (im4_washy) mit den Tabellen `sensordata`, `family_members`, `devices` und `users`. Der Zugriff auf die Datenbank wird zentral über die Datei **config.php** geregelt, die von allen PHP-Endpoints eingebunden wird. Die Web-App besteht aus **protected.html** (Struktur), **protected.js** (Logik und API-Kommunikation) sowie weiteren Seiten für Login und Registrierung.
+
+---
+
+### Verbundene Sensoren und Aktoren
+
+Das Gerät verfügt über vier angeschlossene Komponenten:
+
+Der **PN532 NFC-Reader** ist GPIO 6 und GPIO 7 angeschlossen. Er liest die eindeutige UID des Armbands (NFC-Chip) wenn dieses auf das Gerät gehalten wird. Diese UID identifiziert das Kind und löst entweder eine Chip-Registrierung oder einen Waschgang aus.
+
+Der **NeoPixel Ring** (12 LEDs, WS2812B) ist an GPIO 20 angeschlossen und wird als visuelles Feedback-Element eingesetzt. Er leuchtet weiss wenn ein Waschgang läuft, grün bei Erfolg, rot bei Misserfolg und blau wenn ein neues Armband erfolgreich mit einem Kind verknüpft wird.
+
+Der **Druckknopf** an GPIO 18 entspricht Station 1 des Waschgangs (Seife). Er ist mit INPUT_PULLDOWN konfiguriert und sendet den Wert 1 sobald er gedrückt wird, was bedeutet dass Seife verwendet wurde.
+
+Der **Regensensor** (analoger AO-Ausgang) an GPIO 4 entspricht Station 2 (Wasser). Er misst kontinuierlich die Feuchtigkeit auf seiner Oberfläche. Liegt der analoge Messwert unter dem definierten Schwellwert von 800, gilt die Station als erfüllt.
+
+
+### Programme (Dateinamen)
+
+| Datei | Typ | Aufgabe |
+
+| haendewaschen.ino | Arduino | Steuert den ESP32-C6: liest NFC, prüft Sensoren, steuert LEDs, sendet Daten |
+| config.php | PHP | Datenbankverbindung, wird von allen Endpoints eingebunden |
+| load.php | PHP | Empfängt Waschgang-Ergebnis vom ESP32 und speichert es in sensordata |
+| check_chip.php | PHP | Prüft ob ein Chip bekannt ist, koppelt neue Chips mit Familienmitgliedern |
+| family_manager.php | PHP | Verwaltet Familienmitglieder (GET/POST/PUT/DELETE inkl. Statistiken) |
+| register.php | PHP | Erstellt neue Benutzerkonten |
+| register_device.php | PHP | Verknüpft ein Gerät (Seriennummer) mit einem Benutzerkonto |
+| protected.html | HTML | Hauptseite der Web-App (Überblick, Familie, Awards, Einstellungen) |
+| protected.js | JavaScript | Lädt Daten vom Server, steuert UI-Logik und API-Kommunikation |
+
+---
+
+### Kommunikationswege
+
+Die Kommunikation zwischen den Komponenten verläuft über zwei getrennte Wege, die beide HTTP als Protokoll verwenden.
+
+Der **ESP32-C6** sendet bei jedem NFC-Scan zuerst einen POST-Request an **check_chip.php** mit der Seriennummer des Geräts und der UID des gescannten Chips. Der Server antwortet mit einem der drei Status: `bekannt` (Waschgang starten), `neu` (Chip wird mit einem wartenden Kind gekoppelt, Ring leuchtet blau) oder `unbekannt` (kein Waschgang, keine Aktion). Nach Abschluss eines Waschgangs sendet der ESP32 einen weiteren POST-Request an **load.php** mit den Feldern `kind` (Chip-UID), `seife`, `wasser` und `erfolg` als JSON, welche in der Tabelle `sensordata` gespeichert werden.
+
+Die **Web-App** kommuniziert ausschliesslich mit **family_manager.php**. Ein GET-Request lädt alle Familienmitglieder des eingeloggten Users inklusive Statistiken und die neuesten Aktivitäten. POST erstellt ein neues Mitglied und setzt `register_pending = 1`, wodurch der ESP32 beim nächsten Chip-Scan diesen automatisch dem Kind zuordnet. PUT aktualisiert bestehende Mitgliederdaten, DELETE entfernt ein Mitglied vollständig.
+
+Die Datenbankverbindung wird serverseitig über **config.php** hergestellt, das von jedem PHP-Endpoint via `require_once` eingebunden wird. Zugangsdaten wie Host, Datenbankname, Benutzername und Passwort sind ausschliesslich in dieser Datei gespeichert und werden nie an den Client übertragen.
