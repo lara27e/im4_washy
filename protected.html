@@ -28,7 +28,21 @@
         <p class="chart-description">
           <span id="desc-percentage">0</span>% wurden heute richtig die Hände gewaschen.
         </p>
-      
+        <div class="chart-section" style="margin: 30px 0 20px 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; font-size: 16px; color: #555;">Wasch-Verlauf (Woche)</h3>
+            
+            <select id="chartUserSelector" onchange="updateChartData()" style="padding: 8px 12px; border-radius: 12px; border: none; background: #f0f4ff; color: #3f51b5; font-weight: bold; font-family: inherit; font-size: 13px; outline: none; cursor: pointer;">
+              <option value="family">Familie gesamt</option>
+              </select>
+
+          </div>
+          
+          <div style="background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
+            <canvas id="myBarChart"></canvas>
+          </div>
+        </div>
+
         <h2 class="section-title">Live Aktivitäten</h2>
         <div id="activitiesList" class="activities-container">
           <div class="activity-item">
@@ -157,7 +171,7 @@
 
       <section id="awards" class="tab-content">
 
-  <h1>🏆 Awards</h1>
+  <h1>Statistik</h1>
   <p class="subtitle">Eure Familie rockt!</p>
 
   <div class="placeholder-card" style="text-align:left;">
@@ -184,75 +198,10 @@
     </p>
   </div>
 
-  <div class="placeholder-card" style="text-align:left;">
-    <h3>Beobachtungen</h3>
-    <div id="observationsList"></div>
-  </div>
-
-  <!-- DETAILANSICHT KIND -->
-  <div id="childDetailModal" class="hidden">
-    <div class="detail-card">
-
-      <div class="detail-header">
-        <div class="detail-avatar" id="detailAvatar">🐬</div>
-        <h2 id="detailName">Lara</h2>
-        <p class="detail-motivation" id="detailMotivation">
-          Du machst das super, Lara!
-        </p>
-      </div>
-
-      <div class="detail-toggle">
-        <button type="button" id="todayBtn" class="active-toggle">Heute</button>
-        <button type="button" id="weekBtn">Diese Woche</button>
-      </div>
-
-      <div id="todayView">
-        <div class="detail-stat-box">
-          <h3 id="detailPercent">50% richtig Hände gewaschen</h3>
-        </div>
-
-        <div class="detail-table">
-          <h3>Zeittabelle</h3>
-
-          <div class="time-entry">
-            <span>09:00 Uhr</span>
-            <span>💧 🧼 ✅</span>
-          </div>
-
-          <div class="time-entry">
-            <span>12:30 Uhr</span>
-            <span>💧 ❌</span>
-          </div>
-
-          <div class="time-entry">
-            <span>18:00 Uhr</span>
-            <span>💧 🧼 ✅</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="weekView" class="hidden">
-        <div class="week-box">
-          <strong>Montag</strong><br>
-          3/3 richtig gewaschen<br>
-          Perfekt!
-        </div>
-
-        <div class="week-box">
-          <strong>Dienstag</strong><br>
-          2/4 richtig gewaschen<br>
-          Fast geschafft!
-        </div>
-
-        <div class="week-box">
-          <strong>Mittwoch</strong><br>
-          1/2 richtig gewaschen<br>
-          Nicht aufgeben, du schaffst das!
-        </div>
-      </div>
-
-    </div>
-  </div>
+  <div class="placeholder-card">
+  <h3>Beobachtungen</h3>
+  <div id="observationsList"></div>
+</div>
 
 </section>
 
@@ -301,7 +250,7 @@
         </div>
         <div class="nav-item" onclick="switchTab('awards')">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-          <span class="nav-text">Awards</span>
+          <span class="nav-text">Statistik</span>
         </div>
         <div class="nav-item" onclick="switchTab('einstellungen')">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -311,9 +260,11 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/background.js"></script>
     <script src="js/protected.js"></script>
     <script src="js/logout.js"></script>
+    
     
     <script>
       function switchTab(tabId) {
@@ -323,6 +274,6 @@
         event.currentTarget.classList.add('active');
       }
     </script>
-
+    <div id="childDetailModal" class="hidden"></div>
   </body>
 </html>

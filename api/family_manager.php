@@ -66,10 +66,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $act['emoji'] = $emojiMapping[$act['icon']] ?? '✨';
         }
         
-        // Senden des kombinierten Pakets
+        // ==========================================
+        // 3. NEU: BERECHNUNG FÜR DAS DIAGRAMM (Mo-So)
+        // ==========================================
+        $startOfWeek = date('Y-m-d 00:00:00', strtotime('monday this week'));
+
+        // Wir holen alle Waschvorgänge der aktuellen Woche für die ganze Familie
+        $stmtChart = $pdo->prepare("
+            SELECT s.time, s.erfolg, f.id as child_id
+            FROM sensordata s
+            JOIN family_members f ON s.kind = f.bracelet
+            WHERE f.user_id = ? AND s.time >= ?
+        ");
+        $stmtChart->execute([$user_id, $startOfWeek]);
+        $chartRows = $stmtChart->fetchAll(PDO::FETCH_ASSOC);
+
+        // Arrays für die 7 Tage (Mo-So) vorbereiten
+        $chartData = [
+            "family" => [
+                "success" => [0,0,0,0,0,0,0],
+                "fail"    => [0,0,0,0,0,0,0]
+            ]
+        ];
+
+        foreach ($chartRows as $row) {
+            // Wochentag ermitteln: date('N') gibt 1 (Mo) bis 7 (So). Wir machen daraus Index 0 bis 6.
+            $dayIndex = date('N', strtotime($row['time'])) - 1;
+            $childId = $row['child_id'];
+            $isSuccess = ($row['erfolg'] == 1);
+
+            // Wenn dieses Kind noch nicht im Array ist, leere Wochen-Arrays anlegen
+            if (!isset($chartData[$childId])) {
+                $chartData[$childId] = [
+                    "success" => [0,0,0,0,0,0,0],
+                    "fail"    => [0,0,0,0,0,0,0]
+                ];
+            }
+
+            // Werte entsprechend hochzählen
+            if ($isSuccess) {
+                $chartData["family"]["success"][$dayIndex]++;
+                $chartData[$childId]["success"][$dayIndex]++;
+            } else {
+                $chartData["family"]["fail"][$dayIndex]++;
+                $chartData[$childId]["fail"][$dayIndex]++;
+            }
+        }
+        // ==========================================
+
+        // Senden des kombinierten Pakets (inklusive chartData!)
         echo json_encode([
             "members" => $members,
-            "activities" => $activities
+            "activities" => $activities,
+            "chartData" => $chartData
         ]);
 
     } catch (PDOException $e) {

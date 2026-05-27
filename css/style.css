@@ -1,19 +1,28 @@
 /* ========================================= */
+/* 0. RESET & BOX-SIZING (Wichtig für Mobile)*/
+/* ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ========================================= */
 /* 1. GRUND-SETUP & ANIMATIONEN              */
 /* ========================================= */
 
-body {
+html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%; /* Besser als 100vh für mobile Browser */
+  overflow: hidden; /* WICHTIG: Sperrt das Scrollen im Hintergrund komplett! */
+}
+
+body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   color: #555;
-  overflow: hidden; /* Verhindert Scrollen durch Hintergrund-Punkte */
   position: relative;
+  display: block; 
 }
 
 @keyframes float {
@@ -41,29 +50,33 @@ body {
 /* 2. CONTAINER & LAYOUT                     */
 /* ========================================= */
 
-/* Der Kasten für Login, Register und Profil */
 .login-container {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 400px;
+  /* Auf dem Handy etwas Abstand zum Rand */
+  padding: 20px 15px; 
   text-align: center;
-  padding: 20px;
   background: rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
+  /* Optional: auf ganz kleinen Screens den Radius anpassen */
+  border-radius: 20px; 
+  margin: 0 auto;
 }
 
-/* Der Container für das Dashboard (App-Ansicht) */
+/* ========================================= */
+/* 2. CONTAINER & LAYOUT                     */
+/* ========================================= */
+
 .app-container {
   width: 100%;
-  max-width: 450px;
-  height: 100vh;
+  height: 100%; /* Passt sich exakt dem Body an */
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-  padding-bottom: 100px; /* Platz für Nav unten */
-  overflow-y: auto; /* Erlaubt Scrollen im Dashboard */
+  padding: 15px; 
+  padding-bottom: 120px; /* Platz für die Navbar */
+  overflow-y: auto; /* NUR HIER darf gescrollt werden */
+  overflow-x: hidden;
+  margin: 0 auto;
 }
 
 .logo {
@@ -74,14 +87,15 @@ body {
 }
 
 .logo img {
-  max-width: 120px;
+  width: 100%;
+  max-width: 120px; /* Logo bleibt maximal 120px groß */
   height: auto;
   display: block;
 }
 
 h1 {
   color: #9ad3ff;
-  font-size: 24px;
+  font-size: 22px; /* Minimal kleiner für kleine Handys */
   margin-bottom: 5px;
 }
 
@@ -97,18 +111,16 @@ h1 {
 
 .input-group {
   text-align: left;
-  margin-bottom: 25px; /* Von 15px auf 25px erhöht für mehr Abstand */
+  margin-bottom: 20px;
 }
 
-/* Neu: Damit die "Überschriften" im Formular nicht am Feld darüber kleben */
 h2 {
   color: #9ad3ff;
-  font-size: 20px;
-  margin: 30px 0 15px 0; /* Mehr Platz nach oben (30px) */
+  font-size: 18px;
+  margin: 25px 0 15px 0;
   text-align: center;
 }
 
-/* Optional: Eine Trennlinie, falls du sie nutzt */
 hr {
   border: 0;
   border-top: 1px solid #f2f2f2;
@@ -125,26 +137,24 @@ label {
 
 input {
   width: 100%;
-  padding: 12px 15px;
+  padding: 14px 15px; /* Etwas mehr Padding für bessere Touch-Ziele auf dem Handy */
   border: none;
   border-radius: 10px;
   background-color: #f8f9fc;
-  box-sizing: border-box;
-  font-size: 14px;
+  font-size: 16px; /* 16px verhindert bei iOS automatischen Zoom! */
   color: #333;
 }
 
 button, .btn-secondary {
   width: 100%;
-  padding: 12px;
+  padding: 14px; /* Touch-Ziel vergrößert */
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s;
   text-decoration: none;
   display: inline-block;
-  box-sizing: border-box;
   text-align: center;
 }
 
@@ -172,6 +182,7 @@ button:active { transform: scale(0.98); }
   display: none;
   text-align: center;
   animation: fadeIn 0.3s ease;
+  padding-bottom: 25px; /* NEU: Garantiert immer etwas Luft zur Navigation */
 }
 
 .tab-content.active {
@@ -182,7 +193,7 @@ button:active { transform: scale(0.98); }
   text-align: left;
   background: #f0f4ff;
   border-radius: 15px;
-  padding: 20px;
+  padding: 15px;
   margin-bottom: 15px;
   color: #555;
 }
@@ -200,8 +211,11 @@ button:active { transform: scale(0.98); }
 
 .circular-progress {
   position: relative;
-  width: 200px;
-  height: 200px;
+  /* Mit relativen Einheiten für fließende Anpassung */
+  width: 50vw; 
+  max-width: 200px;
+  height: 50vw;
+  max-height: 200px;
 }
 
 .circular-progress svg {
@@ -235,13 +249,13 @@ button:active { transform: scale(0.98); }
 }
 
 .chart-text span#percentageValue {
-  font-size: 52px;
+  font-size: 42px; /* Leicht verkleinert für Mobile */
   font-weight: bold;
   color: #B6DDFB;
 }
 
 .chart-text small {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: bold;
   color: #B6DDFB;
 }
@@ -263,7 +277,7 @@ button:active { transform: scale(0.98); }
   text-align: left;
   font-size: 15px;
   color: #48A14D;
-  margin: 20px 0 10px 10px;
+  margin: 20px 0 10px 5px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -281,13 +295,24 @@ button:active { transform: scale(0.98); }
 .activity-item {
   background: #F6FBF6;
   border-radius: 15px;
-  padding: 12px 15px;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
   border: 1px solid #f8f9fc;
   margin-bottom: 10px;
+}
+
+/* NEU: Die Fehler-Variante für abgebrochenes Händewaschen */
+.activity-item.failed {
+  background: #fff0f4; /* Ein zartes, helles Rot/Rosa */
+  border: 1px solid #ffe1e8; /* Passender leicht rötlicher Rand */
+}
+
+/* Optional: Falls du die Schriftfarbe des Textes auch etwas rötlicher/dunkler haben willst */
+.activity-item.failed .activity-fulltext {
+  color: #a8425b; 
 }
 
 .activity-icon {
@@ -298,32 +323,31 @@ button:active { transform: scale(0.98); }
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  margin-right: 12px;
+  margin-right: 10px;
+  flex-shrink: 0; /* Verhindert das Quetschen des Icons */
 }
 
 .activity-info { flex: 1; text-align: left; }
 .activity-fulltext { font-size: 13px; color: #555; margin: 0; }
-.activity-time { font-size: 11px; color: #bbb; font-weight: 600; }
+.activity-time { font-size: 11px; color: #bbb; font-weight: 600; white-space: nowrap; margin-left: 10px; }
 
 /* ========================================= */
 /* 7. NAVIGATION UNTEN                       */
 /* ========================================= */
 
 .bottom-nav {
-  position: fixed;
+  position: fixed; /* Bleibt wie festgewachsen am Handy-Rand */
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 100%;
-  max-width: 450px;
   background: white;
   display: flex;
   justify-content: space-around;
   padding: 10px 0 25px 0;
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-  z-index: 100;
+  z-index: 999;
 }
 
 .nav-item {
@@ -338,7 +362,7 @@ button:active { transform: scale(0.98); }
 
 .nav-item.active { color: #B6DDFB; }
 
-.nav-icon { width: 24px; height: 24px; margin-bottom: 6px; stroke: currentColor; }
+.nav-icon { width: 24px; height: 24px; margin-bottom: 4px; stroke: currentColor; }
 .nav-text { font-size: 10px; font-weight: 600; text-transform: uppercase; }
 
 /* ========================================= */
@@ -346,7 +370,7 @@ button:active { transform: scale(0.98); }
 /* ========================================= */
 
 .profil-page {
-  background-color: #f8f3f6;
+  background-color: #ffffff; /* Hier war vorher #f8f3f6 */
   overflow: auto;
 }
 
@@ -359,23 +383,20 @@ button:active { transform: scale(0.98); }
 
 .hidden { display: none !important; }
 
-/* Container für die Liste */
 .family-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px; /* Für Handys leicht reduziert */
   padding-bottom: 20px;
 }
 
-/* Die Hauptkarte */
 .member-card {
-  border-radius: 25px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 15px;
   text-align: left;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-/* Header-Bereich (Avatar & Name) */
 .member-header {
   display: flex;
   align-items: center;
@@ -384,50 +405,42 @@ button:active { transform: scale(0.98); }
 }
 
 .member-avatar {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   background: white;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 30px;
-  margin-right: 15px;
+  font-size: 24px;
+  margin-right: 12px;
   position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex-shrink: 0;
 }
 
 .add-badge {
   position: absolute;
   top: -2px;
   left: -2px;
-  background: #3f51b5; /* Dunkelblaues Badge */
+  background: #3f51b5;
   color: white;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 2px solid white;
 }
 
-.member-meta h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #333;
-}
-
-.member-meta p {
-  margin: 2px 0 0 0;
-  font-size: 13px;
-  color: #666;
-}
+.member-meta h3 { margin: 0; font-size: 16px; color: #333; }
+.member-meta p { margin: 2px 0 0 0; font-size: 12px; color: #666; }
 
 .edit-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   background: white;
   border-radius: 50%;
   display: flex;
@@ -440,65 +453,52 @@ button:active { transform: scale(0.98); }
   transition: transform 0.2s;
 }
 
-.edit-btn:hover {
-  transform: scale(1.1);
-}
+.edit-btn:hover { transform: scale(1.1); }
 
-/* Löschen Button im Modal */
 .btn-delete {
   background: #ffcdd2;
   color: #c62828;
   border: none;
   border-radius: 15px;
   padding: 10px;
-  margin-right: auto; /* Schiebt andere Buttons nach rechts */
+  margin-right: auto;
   cursor: pointer;
   font-weight: bold;
 }
 
-/* Statistik-Grid (Die 3 weißen Boxen) */
 .member-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px; /* Kleinerer Gap für Handys */
 }
 
 .stat-item {
   background: rgba(255, 255, 255, 0.8);
   padding: 10px 5px;
-  border-radius: 15px;
+  border-radius: 12px;
   text-align: center;
 }
 
-.stat-item strong {
-  display: block;
-  font-size: 16px;
-  color: #3f51b5;
-}
-
-.stat-item p {
-  margin: 2px 0 0 0;
-  font-size: 10px;
-  color: #888;
-  text-transform: uppercase;
-  font-weight: bold;
-}
+.stat-item strong { display: block; font-size: 14px; color: #3f51b5; }
+.stat-item p { margin: 2px 0 0 0; font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold; }
 
 /* FARB-VARIANTEN */
 .member-card.pink { background-color: #fdf2f7; }
 .member-card.pink strong { color: #e91e63; }
-
 .member-card.yellow { background-color: #fff9e6; }
 .member-card.yellow strong { color: #ffa000; }
-
 .member-card.blue { background-color: #eef2ff; }
 .member-card.blue strong { color: #3f51b5; }
+.member-card.green { background-color: #e8f5e9; }
+.member-card.green strong { color: #2e7d32; }
+.member-card.purple { background-color: #f3e5f5; }
+.member-card.purple strong { color: #7b1fa2; }
 
 /* HINZUFÜGEN BUTTON */
 .add-family-btn {
   background: none;
   border: 2px dashed #B4DDFC;
-  border-radius: 20px;
+  border-radius: 15px;
   padding: 15px;
   color: #3f51b5;
   font-weight: bold;
@@ -507,11 +507,12 @@ button:active { transform: scale(0.98); }
   transition: all 0.2s;
 }
 
-.add-family-btn:hover {
-  background: #f0f4ff;
-}
+.add-family-btn:hover { background: #f0f4ff; }
 
-/* Modal Hintergrund */
+/* ========================================= */
+/* MODALS & OVERLAYS                         */
+/* ========================================= */
+
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -521,510 +522,286 @@ button:active { transform: scale(0.98); }
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 15px; /* Verhindert, dass das Modal den Rand berührt */
 }
 
-/* Modal Karte */
 .modal-content {
   background: white;
-  width: 90%;
-  max-width: 400px;
-  padding: 25px;
-  border-radius: 30px;
+  width: 100%;
+  max-width: 380px;
+  padding: 20px;
+  border-radius: 25px;
   text-align: left;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-height: 90vh; /* Scrollbar erlauben, wenn Display zu klein */
+  overflow-y: auto;
 }
 
 .selection-label {
   font-size: 14px;
   color: #666;
-  margin: 20px 0 10px 0;
+  margin: 15px 0 10px 0;
 }
 
-/* Tier Auswahl-Gitter */
 .animal-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 25px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .animal-option {
   text-align: center;
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 15px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.animal-option span { font-size: 30px; display: block; }
+.animal-option span { font-size: 26px; display: block; }
 .animal-option p { font-size: 10px; margin: 5px 0 0 0; color: #888; }
+.animal-option.selected { background-color: #f3e5f5; box-shadow: 0 0 0 2px #ce93d8; }
 
-/* Markierung wenn ausgewählt */
-.animal-option.selected {
-  background-color: #f3e5f5;
-  box-shadow: 0 0 0 2px #ce93d8;
-}
+.modal-buttons { display: flex; gap: 10px; }
+.btn-cancel { background: #f0f0f0; color: #666; border: none; border-radius: 12px; padding: 12px; flex: 1; font-weight: bold; }
+.btn-save { background: #B4DDFC; color: white; border: none; border-radius: 12px; padding: 12px; flex: 1; font-weight: bold; }
 
-/* Buttons im Modal */
-.modal-buttons {
-  display: flex;
-  gap: 10px;
-}
+.role-selection { display: flex; gap: 10px; margin-bottom: 15px; }
+.role-btn { flex: 1; background: #f8f9fc; border: 2px solid transparent; color: #888; padding: 10px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px; text-align: center;}
+.role-btn.selected { background: #eef2ff; border-color: #B4DDFC; color: #3f51b5; }
 
-.btn-cancel {
-  background: #f0f0f0;
-  color: #666;
-  border: none;
-  border-radius: 15px;
+.color-selection { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+.color-option { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.2s; }
+.color-option.pink { background-color: #fdf2f7; }
+.color-option.yellow { background-color: #fff9e6; }
+.color-option.blue { background-color: #eef2ff; }
+.color-option.green { background-color: #e8f5e9; }
+.color-option.purple { background-color: #f3e5f5; }
+.color-option.selected { border-color: #B4DDFC; transform: scale(1.1); }
+
+/* ========================================= */
+/* AWARDS SEITE                              */
+/* ========================================= */
+
+#awards { padding-bottom: 90px; }
+#awards h1 { color: #9ad3ff; margin-bottom: 5px; }
+#awards .subtitle { color: #888; margin-bottom: 20px; }
+
+.placeholder-card {
+  border-radius: 20px;
   padding: 15px;
-  flex: 1;
-}
-
-.btn-save {
-  background: #B4DDFC;
-  color: white;
-  border: none;
-  border-radius: 15px;
-  padding: 15px;
-  flex: 1;
-}
-
-.role-selection {
-  display: flex;
-  gap: 10px;
   margin-bottom: 15px;
-}
-
-.role-btn {
-  flex: 1;
-  background: #f8f9fc;
-  border: 2px solid transparent;
-  color: #888;
-  padding: 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.role-btn.selected {
-  background: #eef2ff;
-  border-color: #B4DDFC;
-  color: #3f51b5;
-}
-
-.role-btn:hover:not(.selected) {
-  background: #f0f0f0;
-}
-
-.color-selection {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-  padding: 5px;
-}
-
-.color-option {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 3px solid transparent;
-  transition: transform 0.2s, border-color 0.2s;
-}
-
-.color-option:hover { transform: scale(1.1); }
-
-/* Die Farben */
-.color-option.pink { background-color: #fdf2f7; border-color: #fdf2f7; }
-.color-option.yellow { background-color: #fff9e6; border-color: #fff9e6; }
-.color-option.blue { background-color: #eef2ff; border-color: #eef2ff; }
-.color-option.green { background-color: #e8f5e9; border-color: #e8f5e9; }
-.color-option.purple { background-color: #f3e5f5; border-color: #f3e5f5; }
-
-/* Markierung für die gewählte Farbe */
-.color-option.selected {
-  border-color: #B4DDFC; /* Ein schöner blauer Ring um die gewählte Farbe */
-  transform: scale(1.1);
-}
-
-/* Neue Farb-Varianten für die Karten (falls noch nicht alle drin sind) */
-.member-card.green { background-color: #e8f5e9; }
-.member-card.green strong { color: #2e7d32; }
-
-.member-card.purple { background-color: #f3e5f5; }
-.member-card.purple strong { color: #7b1fa2; }
-
-/* =========================
-   AWARDS SEITE
-========================= */
-
-#awards {
-  padding-bottom: 90px;
-}
-
-#awards h1 {
-  color: #9ad3ff;
-  margin-bottom: 5px;
-}
-
-#awards .subtitle {
-  color: #888;
-  margin-bottom: 20px;
-}
-
-/* =========================
-   AWARDS KARTEN
-========================= */
-
-#awards .placeholder-card {
-  border-radius: 22px;
-  padding: 18px;
-  margin-bottom: 18px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.05);
 }
 
-/* Ranking */
-#awards .placeholder-card:nth-of-type(1) {
-  background: #9ad3ff;
-}
+#awards .placeholder-card:nth-of-type(1) { background: #9ad3ff; }
+#awards .placeholder-card:nth-of-type(2) { background: #ffd9e9; }
+#awards .placeholder-card:nth-of-type(3) { background: #e8f5e9; }
+#awards h3 { margin-top: 0; margin-bottom: 12px; color: #555; font-size: 16px; }
 
-/* Familien-Erfolge */
-#awards .placeholder-card:nth-of-type(2) {
-  background: #ffd9e9;
-}
+#familyRanking p { background: rgba(255,255,255,0.7); color: #555; padding: 10px 12px; border-radius: 14px; margin: 8px 0; font-weight: 600; font-size: 14px; }
+#awards .placeholder-card p { background: rgba(255,255,255,0.6); border-radius: 12px; padding: 10px 12px; margin: 8px 0; color: #666; font-size: 13px; }
+#observationsList p { background: rgba(255,255,255,0.7); border-radius: 12px; padding: 10px 12px; margin: 8px 0; color: #666; font-size: 13px; }
 
-/* Beobachtungen */
-#awards .placeholder-card:nth-of-type(3) {
-  background: #e8f5e9;
-}
-
-/* Überschriften */
-#awards h3 {
-  margin-top: 0;
-  margin-bottom: 14px;
-  color: #555;
-  font-size: 17px;
-}
-
-/* =========================
-   RANKING
-========================= */
-
-#familyRanking p {
-  background: rgba(255,255,255,0.7);
-  color: #555;
-  padding: 12px 14px;
-  border-radius: 16px;
-  margin: 10px 0;
-  font-weight: 600;
-}
-
-/* =========================
-   FAMILIENERFOLGE
-========================= */
-
-#awards .placeholder-card p {
-  background: rgba(255,255,255,0.6);
-  border-radius: 14px;
-  padding: 11px 13px;
-  margin: 10px 0;
-  color: #666;
-  font-size: 14px;
-}
-
-/* =========================
-   BEOBACHTUNGEN
-========================= */
-
-#observationsList p {
-  background: rgba(255,255,255,0.7);
-  border-radius: 14px;
-  padding: 12px 14px;
-  margin: 10px 0;
-  color: #666;
-  font-size: 14px;
-}
+.ranking-button { width: 100%; border: none; background: rgba(255,255,255,0.7); padding: 12px; border-radius: 14px; margin: 8px 0; font-weight: 600; color: #555; text-align: left; cursor: pointer; }
 
 /* ========================================= */
 /* DETAILANSICHT KIND (POP-UP MODAL)         */
 /* ========================================= */
 
 #childDetailModal {
-  background-color: rgba(0, 0, 0, 0.4); /* Sanfte Abdunklung des Hintergrunds */
-}
-
-.detail-header {
-  text-align: center;
-}
-
-.detail-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #B4DDFC;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Hintergrund abdunkeln */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 38px;
-  margin: 0 auto 10px auto;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.detail-motivation {
-  color: #888;
-  font-size: 13px;
-  margin-bottom: 15px;
-}
-
-.detail-toggle {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.detail-toggle button {
-  flex: 1;
-  border: none;
-  padding: 10px;
-  border-radius: 12px;
-  background: #f3f3f3;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.active-toggle {
-  background: #B4DDFC !important;
-  color: white;
-}
-
-.detail-stat-box {
-  background: #f0f4ff;
+  z-index: 2000; /* Ganz nach oben! */
   padding: 15px;
-  border-radius: 16px;
-  margin-bottom: 15px;
-  text-align: center;
 }
 
-.detail-table {
-  background: #fff7fb;
-  padding: 15px;
-  border-radius: 16px;
-}
-
-.time-entry {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 13px;
-  border-bottom: 1px solid #eee;
-}
-
-.time-entry:last-child {
-  border-bottom: none;
-}
-
-.week-box {
-  background: #f8f9fc;
-  border-radius: 14px;
-  padding: 12px;
-  margin-bottom: 10px;
-  font-size: 13px;
-}
-
-/* DETAILANSICHT */
-
-.detail-card{
-  background:white;
-  border-radius:25px;
-  padding:20px;
-  margin-top:20px;
-}
-
-.detail-header{
-  text-align:center;
-}
-
-.detail-avatar{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  background:#B4DDFC;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:40px;
-  margin:0 auto 15px auto;
-}
-
-.detail-motivation{
-  color:#888;
-  margin-bottom:20px;
-}
-
-.detail-toggle{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-}
-
-.detail-toggle button{
-  flex:1;
-  border:none;
-  padding:12px;
-  border-radius:14px;
-  background:#f3f3f3;
-  cursor:pointer;
-}
-
-.active-toggle{
-  background:#B4DDFC !important;
-  color:white;
-}
-
-.detail-stat-box{
-  background:#f0f4ff;
-  padding:18px;
-  border-radius:18px;
-  margin-bottom:15px;
-  text-align:center;
-}
-
-.detail-table{
-  background:#fff7fb;
-  padding:18px;
-  border-radius:18px;
-}
-
-.time-entry{
-  display:flex;
-  justify-content:space-between;
-  padding:10px 0;
-  border-bottom:1px solid #eee;
-}
-
-.week-box{
-  background:#f8f9fc;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:12px;
-}
-
-.hidden{
-  display:none;
-}
-
-.ranking-button {
+.detail-card {
+  background: white;
+  border-radius: 30px;
+  padding: 30px 20px;
   width: 100%;
-  border: none;
-  background: rgba(255,255,255,0.7);
-  padding: 12px 14px;
-  border-radius: 16px;
-  margin: 10px 0;
-  font-weight: 600;
-  color: #555;
-  text-align: left;
+  max-width: 400px;
+  position: relative; /* Wichtig für die Position des Pfeils */
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+/* Der Zurück-Pfeil */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s;
 }
 
-.ranking-button:active {
-  transform: scale(0.98);
+.back-btn:hover {
+  background-color: #f5f5f5;
+}
+.detail-header { text-align: center; }
+.detail-avatar { width: 70px; height: 70px; border-radius: 50%; background: #B4DDFC; display: flex; justify-content: center; align-items: center; font-size: 30px; margin: 0 auto 10px auto; }
+.detail-motivation { color: #888; font-size: 13px; margin-bottom: 15px; }
+
+.detail-toggle { display: flex; gap: 10px; margin-bottom: 15px; }
+.detail-toggle button { flex: 1; border: none; padding: 10px; border-radius: 12px; background: #f3f3f3; cursor: pointer; font-weight: 600; font-size: 13px; }
+.active-toggle { background: #B4DDFC !important; color: white; }
+
+.detail-stat-box { background: #f0f4ff; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: center; }
+.detail-table { background: #fff7fb; padding: 15px; border-radius: 15px; }
+
+.time-entry { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #eee; }
+.time-entry:last-child { border-bottom: none; }
+.week-box { background: #f8f9fc; border-radius: 14px; padding: 12px; margin-bottom: 10px; font-size: 13px; }
+
+/* ========================================= */
+/* BRACELET MODAL                            */
+/* ========================================= */
+
+.bracelet-modal-box {
+  background: white;
+  border-radius: 20px;
+  padding: 25px 20px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  transition: border 0.3s;
+  border: 3px solid transparent;
 }
 
-  /* Bracelet Modal */
-  .bracelet-modal-box {
-    background: white;
-    border-radius: 20px;
-    padding: 32px 24px;
-    max-width: 340px;
-    width: 90%;
-    margin: auto;
-    text-align: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    transition: border 0.3s;
-    border: 3px solid transparent;
-  }
+.bracelet-modal-box.waiting { border-color: #a0b4ff; }
+.bracelet-modal-box.success { border-color: #4caf50; }
+.bracelet-modal-box.timeout { border-color: #ff9800; }
+.bracelet-modal-box.error   { border-color: #f44336; }
 
-  /* Zustände */
-  .bracelet-modal-box.waiting { border-color: #a0b4ff; }
-  .bracelet-modal-box.success { border-color: #4caf50; }
-  .bracelet-modal-box.timeout { border-color: #ff9800; }
-  .bracelet-modal-box.error   { border-color: #f44336; }
+.bracelet-icon { font-size: 45px; margin-bottom: 10px; animation: pulse 1.5s infinite; }
+.bracelet-modal-box.success .bracelet-icon, .bracelet-modal-box.timeout .bracelet-icon, .bracelet-modal-box.error .bracelet-icon { animation: none; }
 
-  .bracelet-icon {
-    font-size: 52px;
-    margin-bottom: 12px;
-    animation: pulse 1.5s infinite;
-  }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
 
-  .bracelet-modal-box.success .bracelet-icon,
-  .bracelet-modal-box.timeout .bracelet-icon,
-  .bracelet-modal-box.error   .bracelet-icon {
-    animation: none;
-  }
+.bracelet-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: #222; }
+.bracelet-instruction { font-size: 0.85rem; color: #555; margin-bottom: 15px; line-height: 1.4; }
+.bracelet-status-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #444; margin-bottom: 8px; }
 
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50%       { transform: scale(1.12); }
-  }
+.bracelet-timer { font-weight: 700; font-size: 0.95rem; color: #a0b4ff; }
+.bracelet-modal-box.timeout .bracelet-timer, .bracelet-modal-box.error .bracelet-timer { color: #f44336; }
+.bracelet-modal-box.success .bracelet-timer { color: #4caf50; }
 
-  .bracelet-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #222;
-  }
+.bracelet-progress-bar { background: #eee; border-radius: 8px; height: 6px; overflow: hidden; margin-bottom: 4px; }
+.bracelet-progress-fill { height: 100%; width: 100%; background: #a0b4ff; border-radius: 8px; animation: countdown 30s linear forwards; }
+.bracelet-modal-box.success .bracelet-progress-fill { background: #4caf50; animation: none; width: 100%; }
+.bracelet-modal-box.timeout .bracelet-progress-fill { background: #ff9800; animation: none; width: 0%; }
+.bracelet-modal-box.error .bracelet-progress-fill { background: #f44336; animation: none; width: 0%; }
 
-  .bracelet-instruction {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
+@keyframes countdown { from { width: 100%; } to { width: 0%; } }
 
-  .bracelet-status-row {
+
+/* ========================================= */
+/* 9. MEDIA QUERIES (TABLETS & DESKTOP)      */
+/* ========================================= */
+
+@media (min-width: 768px) {
+  
+  body {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    font-size: 0.88rem;
-    color: #444;
-    margin-bottom: 8px;
+    background-color: #ffffff; /* Hier war vorher #e4ebf5 */
   }
 
-  .bracelet-timer {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #a0b4ff;
+  .login-container,
+  .app-container {
+    max-width: 850px; /* Deutlich breiter für den echten Desktop-Look! */
+    height: 85vh;     /* Etwas eleganter als 90vh */
+    border-radius: 30px;
+    background-color: white;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.08); /* Etwas weicherer, größerer Schatten */
+    position: relative;
+    padding-bottom: 0; 
   }
 
-  .bracelet-modal-box.timeout .bracelet-timer,
-  .bracelet-modal-box.error   .bracelet-timer { color: #f44336; }
-  .bracelet-modal-box.success .bracelet-timer { color: #4caf50; }
-
-  /* Fortschrittsbalken */
-  .bracelet-progress-bar {
-    background: #eee;
-    border-radius: 8px;
-    height: 6px;
-    overflow: hidden;
-    margin-bottom: 4px;
+  .detail-card {
+    max-width: 500px; /* Auf dem PC darf das Fenster etwas breiter sein */
+    padding: 40px;
+  }
+  
+  .back-btn {
+    top: 25px;
+    left: 25px;
   }
 
-  .bracelet-progress-fill {
-    height: 100%;
-    width: 100%;
-    background: #a0b4ff;
-    border-radius: 8px;
-    animation: countdown 30s linear forwards;
+  /* ----------------------------------------- */
+  /* DESKTOP-OPTIMIERUNGEN FÜR INHALTE         */
+  /* ----------------------------------------- */
+
+  /* Damit Input-Felder und Buttons nicht über 850px gestreckt werden */
+  .input-group,
+  .login-container button,
+  .login-container .btn-secondary {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .bracelet-modal-box.success .bracelet-progress-fill { background: #4caf50; animation: none; width: 100%; }
-  .bracelet-modal-box.timeout .bracelet-progress-fill { background: #ff9800; animation: none; width: 0%; }
-  .bracelet-modal-box.error   .bracelet-progress-fill { background: #f44336; animation: none; width: 0%; }
-
-  @keyframes countdown {
-    from { width: 100%; }
-    to   { width: 0%; }
+  /* Familie: Auf dem PC in 2 Spalten nebeneinander anzeigen */
+  .family-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
+
+  /* Das Tier-Auswahl-Modal kann auf dem PC auch breiter sein */
+  .modal-content {
+    max-width: 500px;
+  }
+  .animal-grid {
+    grid-template-columns: repeat(4, 1fr); /* 4 Tiere nebeneinander statt 3 */
+  }
+
+  /* ----------------------------------------- */
+  /* NAVIGATION & HOVER-EFFEKTE                */
+  /* ----------------------------------------- */
+
+  .bottom-nav {
+    position: sticky; 
+    bottom: 0;
+    width: calc(100% + 30px); 
+    margin-left: -15px;
+    margin-bottom: 0;
+    margin-top: auto; 
+    padding: 15px 0;
+    border-radius: 0 0 30px 30px; 
+    border-top: 1px solid #f0f4ff; /* Zarte Linie als Abgrenzung */
+    background: rgba(255, 255, 255, 0.95); /* Leichter Transparenz-Effekt (optional) */
+    backdrop-filter: blur(10px); /* Moderner Milchglas-Effekt für Safari/Chrome */
+  }
+
+  /* Interaktionen, die es nur mit der Maus gibt */
+  .nav-item:hover { color: #9ad3ff; transform: translateY(-2px); }
+  .activity-item:hover { transform: translateX(5px); box-shadow: -3px 4px 15px rgba(0,0,0,0.04); }
+  .member-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); transition: all 0.3s; }
+}
+
+/* Optional: Für riesige Monitore (ab 1200px) noch ein bisschen mehr Platz */
+@media (min-width: 1200px) {
+  .login-container,
+  .app-container {
+    max-width: 1000px; 
+  }
+  
+  .family-list {
+    grid-template-columns: repeat(3, 1fr); /* 3 Spalten bei sehr breiten Bildschirmen */
+  }
+}
