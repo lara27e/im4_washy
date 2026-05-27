@@ -25,9 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 f.*,
                 COUNT(CASE WHEN DATE(s.time) = CURDATE() AND s.erfolg = 1 THEN 1 END) as heute_erfolg,
                 COUNT(CASE WHEN DATE(s.time) = CURDATE() THEN 1 END) as heute_gesamt,
+                COUNT(CASE WHEN DATE(s.time) = CURDATE() AND s.erfolg = 0 THEN 1 END) as heute_fail_total,
+                COUNT(CASE WHEN DATE(s.time) = CURDATE() AND s.erfolg = 0 AND s.seife = 0 THEN 1 END) as heute_fail_no_soap,
+                
                 COUNT(CASE WHEN YEARWEEK(s.time, 1) = YEARWEEK(CURDATE(), 1) AND s.erfolg = 1 THEN 1 END) as woche_erfolg,
                 COUNT(CASE WHEN YEARWEEK(s.time, 1) = YEARWEEK(CURDATE(), 1) THEN 1 END) as woche_gesamt,
                 COUNT(CASE WHEN YEARWEEK(s.time, 1) = YEARWEEK(CURDATE(), 1) AND s.erfolg = 0 THEN 1 END) as vergessen_woche,
+                COUNT(CASE WHEN YEARWEEK(s.time, 1) = YEARWEEK(CURDATE(), 1) AND s.erfolg = 0 AND s.seife = 0 THEN 1 END) as woche_fail_no_soap,
+                
                 COUNT(CASE WHEN s.erfolg = 1 THEN 1 END) as lifetime_erfolg,
                 COUNT(CASE WHEN s.seife = 1 THEN 1 END) as lifetime_seife,
                 COUNT(s.id) as lifetime_gesamt
@@ -36,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             WHERE f.user_id = ?
             GROUP BY f.id
         ";
+        // FEHLTENDE ZEILEN WIEDER EINGEFÜGT:
         $stmtM = $pdo->prepare($sqlMembers);
         $stmtM->execute([$user_id]);
         $members = $stmtM->fetchAll(PDO::FETCH_ASSOC);
@@ -48,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $sqlActivities = "
             SELECT 
                 s.erfolg, 
+                s.seife, 
+                s.wasser, 
                 s.time, 
                 f.name, 
                 f.color, 
@@ -58,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             ORDER BY s.time DESC
             LIMIT 5
         ";
+        // FEHLTENDE ZEILEN WIEDER EINGEFÜGT:
         $stmtA = $pdo->prepare($sqlActivities);
         $stmtA->execute([$user_id]);
         $activities = $stmtA->fetchAll(PDO::FETCH_ASSOC);
@@ -204,17 +213,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     }
 
     try {
-        $stmt = $pdo->prepare("SELECT id FROM family_members WHERE id = ? AND user_id = ?");
+        // 1. Prüfen, ob Mitglied existiert, und direkt die Bracelet-ID (Chip) mit auslesen
+        $stmt = $pdo->prepare("SELECT id, bracelet FROM family_members WHERE id = ? AND user_id = ?");
         $stmt->execute([$kind_id, $user_id]);
-        if (!$stmt->fetch()) {
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$member) {
             echo json_encode(["status" => "error", "message" => "Mitglied nicht gefunden oder keine Berechtigung"]);
             exit;
         }
 
-        $stmt = $pdo->prepare("DELETE FROM family_members WHERE id = ?");
-        $stmt->execute([$kind_id]);
+        $bracelet_id = $member['bracelet'];
+
+        // 2. NEU: Falls das Kind ein Armband gekoppelt hatte, löschen wir zuerst alle Sensordaten!
+        if (!empty($bracelet_id)) {
+            $stmtSensor = $pdo->prepare("DELETE FROM sensordata WHERE kind = ?");
+            $stmtSensor->execute([$bracelet_id]);
+        }
+
+        // 3. Erst danach löschen wir das Mitglied selbst aus der Datenbank
+        $stmtDelete = $pdo->prepare("DELETE FROM family_members WHERE id = ?");
+        $stmtDelete->execute([$kind_id]);
         
-        echo json_encode(["status" => "success", "message" => "Mitglied erfolgreich gelöscht"]);
+        echo json_encode(["status" => "success", "message" => "Mitglied und alle dazugehörigen Wasch-Daten erfolgreich gelöscht"]);
 
     } catch (PDOException $e) {
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
