@@ -27,7 +27,7 @@ const char* SERIAL_NUMBER = "SN-12345678";
 // ── Regensensor Schwellwert ───────────────────────────────────────────────────
 // ESP32-C6 ADC: 0 = nass, 4095 = trocken
 // Sensor meldet NASS wenn Wert UNTER diesem Schwellwert liegt.
-#define RAIN_THRESHOLD  800
+#define RAIN_THRESHOLD  2000
 
 // ── Timer: 3 Minuten ─────────────────────────────────────────────────────────
 #define SESSION_DURATION_MS  (1UL * 60UL * 1000UL)   // 1 Minute
@@ -258,18 +258,27 @@ void loop() {
   // ── Warten auf NFC ──────────────────────────────────────────────────────────
   if (!sessionActive) {
     String uid = readNFCTag();
+
     if (uid != "") {
+
       Serial.println("[NFC] Tag erkannt: " + uid);
 
-      if(checkForExistingUser(uid)){
+      if(checkForExistingUser(uid)) {
+
         startSession(uid);
+
       } else {
+
         Serial.println("[NFC] Chip neu registriert → blau leuchten");
+
         ledsBlue();
         delay(5000);
+        ledsOff();   
+
         return;
       }
     }
+
     return;
   }
 
