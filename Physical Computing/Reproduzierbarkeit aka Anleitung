@@ -1,6 +1,19 @@
 # Bauanleitung Physical Computing
 
+
+## Was muss ich wie bauen, verbinden, installieren?
+Bauen:
+Siehe Steckplan (IM4_washy_Steckplan.jpg)
+
+Installieren:
+Arduino AVR Boards (by Arduino)
+esp32 (by Espressif Systems)
+
+Weitere Informationen siehe zum Bau können Sie weiter unten entnehmen.
+
+
 ## Komponentenplan – Beschreibung
+Komponentenplan siehe: (IM4_washy_Komponentenplan.png)
 
 ### Eingesetzte Komponenten
 
@@ -48,3 +61,27 @@ Der **ESP32-C6** sendet bei jedem NFC-Scan zuerst einen POST-Request an **check_
 Die **Web-App** kommuniziert ausschliesslich mit **family_manager.php**. Ein GET-Request lädt alle Familienmitglieder des eingeloggten Users inklusive Statistiken und die neuesten Aktivitäten. POST erstellt ein neues Mitglied und setzt `register_pending = 1`, wodurch der ESP32 beim nächsten Chip-Scan diesen automatisch dem Kind zuordnet. PUT aktualisiert bestehende Mitgliederdaten, DELETE entfernt ein Mitglied vollständig.
 
 Die Datenbankverbindung wird serverseitig über **config.php** hergestellt, das von jedem PHP-Endpoint via `require_once` eingebunden wird. Zugangsdaten wie Host, Datenbankname, Benutzername und Passwort sind ausschliesslich in dieser Datei gespeichert und werden nie an den Client übertragen.
+
+
+Komponentenplan siehe: (IM4_washy_Komponentenplan.png)
+
+
+
+
+
+
+#### kopiert von READ.md
+#### Bauanleitung Physical Computing
+
+* ***Was muss ich wie bauen, verbinden, installieren?***  
+
+
+
+## technische Details
+
+// Hier sollte das Verständnis ersichtlich sein / Wie stehen die Dateien in Beziehung zueinander, Wie reden Die Dateien miteinander, Wie ist der Weg der Daten
+
+* **Projektstruktur / Code-Struktur:** \[*Hinweis: Der Code selbst muss im Repository liegen und im Kopfbereich jeder Datei eine kurze Zusammenfassung enthalten.*\]  
+* **Datenschnittstelle: \[***zwischen WebApp und Physical Computing*\]  
+* **ERM:** \[*Erklärung und Schaubild*\]  
+* **Authentifizierung:** \[*Erklärung*\]

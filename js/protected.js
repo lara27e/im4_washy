@@ -36,6 +36,11 @@ async function loadFamilyMembers() {
     const members = data.members || [];
     const activities = data.activities || [];
 
+    // Chart-Daten global speichern!
+    window.chartData = data.chartData || { family: { success: [0,0,0,0,0,0,0], fail: [0,0,0,0,0,0,0] } };
+
+    window.allFamilyMembers = members; 
+
     const familyList = document.getElementById('familyList');
     if (familyList) {
       familyList.innerHTML = "";
@@ -44,6 +49,10 @@ async function loadFamilyMembers() {
     }
 
     renderLiveActivities(activities);
+
+    // Dropdown und Diagramm mit den echten DB-Daten starten
+    populateChartDropdown(members);
+    updateChartData();
 
   } catch (error) {
     console.error("Fehler beim Laden der Familienmitglieder:", error);
@@ -373,7 +382,13 @@ function initAwardsAndRanking(members) {
         woche_erfolg: erfolgWoche,
         woche_gesamt: gesamtWoche,
         lifetime_erfolg: k.lifetime_erfolg || 0,
-        lifetime_gesamt: k.lifetime_gesamt || 0
+        lifetime_gesamt: k.lifetime_gesamt || 0,
+        
+        // Wir übernehmen die neuen Seifen/Wasser Statistiken aus dem PHP
+        heute_fail_total: parseInt(k.heute_fail_total) || 0,
+        heute_fail_no_soap: parseInt(k.heute_fail_no_soap) || 0,
+        woche_fail_total: parseInt(k.vergessen_woche) || 0,
+        woche_fail_no_soap: parseInt(k.woche_fail_no_soap) || 0
       };
     });
 
@@ -398,6 +413,40 @@ function initAwardsAndRanking(members) {
     }
   }
 
+  // BEOBACHTUNGEN GENERIEREN
+  const obsList = document.getElementById("observationsList");
+  if (obsList) {
+    obsList.innerHTML = ""; 
+    
+    if (kinderDaten.length === 0) {
+      obsList.innerHTML = "<p style='color:#888;'>Noch keine Beobachtungen möglich.</p>";
+    } else {
+      kinderDaten.forEach(child => {
+        let text = "";
+        let icon = "";
+
+        if (child.percent >= 95) {
+          text = `Sehr gut! Aber eventuell aufpassen, dass ${child.name} sich nicht zu viel die Hände wäscht.`;
+          icon = "🌟";
+        } else if (child.percent >= 80) {
+          text = `Super! ${child.name} macht das schon richtig klasse. Weiter so!`;
+          icon = "👍";
+        } else if (child.percent >= 50) {
+          text = `${child.name} ist auf einem guten Weg! Vielleicht noch ein kleines bisschen mehr auf das Kind beim Händewaschen achten.`;
+          icon = "💡";
+        } else if (child.woche_gesamt > 0) { 
+          text = `Erinnere ${child.name} vielleicht ab und zu ans richtige Händewaschen. Übung macht den Meister!`;
+          icon = "🌱";
+        } else { 
+          text = `${child.name} hat diese Woche noch keine Waschvorgänge. Zeit loszulegen!`;
+          icon = "👋";
+        }
+
+        obsList.innerHTML += `<p>${icon} <strong>${child.name}:</strong> ${text}</p>`;
+      });
+    }
+  }
+
   // 2. DASHBOARD KREIS AKTUALISIEREN
   let totalHeuteGesamt = 0;
   let totalHeuteErfolg = 0;
@@ -409,11 +458,9 @@ function initAwardsAndRanking(members) {
   let familyWocheErfolg = 0;
 
   members.forEach(m => {
-    // Für den Dashboard-Kreis
     totalHeuteGesamt += parseInt(m.heute_gesamt) || 0;
     totalHeuteErfolg += parseInt(m.heute_erfolg) || 0;
     
-    // Für die Familien-Erfolge (nur Kinder)
     if (m.role === "Kind") {
       familyLifetimeGesamt += parseInt(m.lifetime_gesamt) || 0;
       familyLifetimeSeife += parseInt(m.lifetime_seife) || 0;
@@ -422,7 +469,6 @@ function initAwardsAndRanking(members) {
     }
   });
 
-  // Kreis-Animation berechnen
   const gesamtProzent = totalHeuteGesamt > 0 ? Math.round((totalHeuteErfolg / totalHeuteGesamt) * 100) : 0;
   const percentageValue = document.getElementById('percentageValue');
   const descPercentage = document.getElementById('desc-percentage');
@@ -452,48 +498,121 @@ function initAwardsAndRanking(members) {
   if (weeklySuccessEl) weeklySuccessEl.innerText = weeklySuccess + "%";
 }
 
+function openModalFromName(childName) {
+  if (!window.allFamilyMembers) return;
+  
+  const k = window.allFamilyMembers.find(m => m.name === childName);
+  if (!k || k.role !== "Kind") return;
+
+  const gesamtWoche = parseInt(k.woche_gesamt) || 0;
+  const erfolgWoche = parseInt(k.woche_erfolg) || 0;
+  const prozentWoche = gesamtWoche > 0 ? Math.round((erfolgWoche / gesamtWoche) * 100) : 0;
+
+  const childData = {
+    id: k.id,
+    name: k.name,
+    percent: prozentWoche,
+    emoji: k.emoji,
+    heute_erfolg: k.heute_erfolg || 0,
+    heute_gesamt: k.heute_gesamt || 0,
+    woche_erfolg: erfolgWoche,
+    woche_gesamt: gesamtWoche,
+    lifetime_erfolg: k.lifetime_erfolg || 0,
+    lifetime_gesamt: k.lifetime_gesamt || 0,
+
+    // Wir packen die Seifen-Werte mit in das Objekt fürs Modal
+    heute_fail_total: parseInt(k.heute_fail_total) || 0,
+    heute_fail_no_soap: parseInt(k.heute_fail_no_soap) || 0,
+    woche_fail_total: parseInt(k.vergessen_woche) || 0,
+    woche_fail_no_soap: parseInt(k.woche_fail_no_soap) || 0
+  };
+
+  openChildDetailModal(childData);
+}
+
 function openChildDetailModal(child) {
   const modal = document.getElementById("childDetailModal");
   if (!modal) return;
 
-  document.getElementById("detailName").innerText = child.name;
-  document.getElementById("detailAvatar").innerText = child.emoji;
-  document.getElementById("detailMotivation").innerText = `Tolle Arbeit, ${child.name}! ✨`;
+  modal.innerHTML = `
+    <div class="detail-card">
+      <div class="back-btn" onclick="closeChildDetailModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </div>
 
-  const heuteProzent = child.heute_gesamt > 0 ? Math.round((child.heute_erfolg / child.heute_gesamt) * 100) : 0;
-  
-  document.getElementById("todayView").innerHTML = `
-    <div class="detail-stat-box" style="text-align: center; padding: 15px;">
-      <h3 style="font-size: 1.4em; color: #2563eb;">Heute: ${heuteProzent}% richtig</h3>
-      <p style="margin-top: 8px; color: #555;">Erfolgreich: <strong>${child.heute_erfolg}</strong> von ${child.heute_gesamt} Versuchen</p>
-    </div>
-  `;
+      <div class="detail-header">
+        <div class="detail-avatar" id="detailAvatar">${child.emoji}</div>
+        <h2 id="detailName" style="color: #333; margin-bottom: 5px;">${child.name}</h2>
+        <p class="detail-motivation">Tolle Arbeit, ${child.name}! ✨</p>
+      </div>
 
-  document.getElementById("weekView").innerHTML = `
-    <div class="week-box" style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
-      <strong style="color: #166534; font-size: 1.1em;">📊 Diese Woche:</strong><br>
-      <span style="display:inline-block; margin-top:5px;">
-        Erfolgsquote: <strong>${child.percent}%</strong><br>
-        Bisher <strong>${child.woche_erfolg}x</strong> fehlerfrei (von ${child.woche_gesamt} Versuchen).
-      </span>
-    </div>
-    
-    <div class="week-box" style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 8px;">
-      <strong style="color: #1e40af; font-size: 1.1em;">👑 Lifetime-Statistik:</strong><br>
-      <span style="display:inline-block; margin-top:5px;">
-        Erfolgreiche Waschtage: <strong style="color: #1d4ed8; font-size: 1.15em;">${child.lifetime_erfolg}x</strong><br>
-        Gesamte Versuche seit Registrierung: ${child.lifetime_gesamt}
-      </span>
+      <div class="detail-toggle">
+        <button id="todayBtnDetail" class="active-toggle" onclick="toggleDetailView('today')">Heute</button>
+        <button id="weekBtnDetail" onclick="toggleDetailView('week')">Diese Woche</button>
+      </div>
+
+      <div id="todayViewDetail">
+        <div class="detail-stat-box">
+          <h3 style="font-size: 1.4em; color: #B4DDFC;">Heute: ${child.heute_gesamt > 0 ? Math.round((child.heute_erfolg / child.heute_gesamt) * 100) : 0}% richtig</h3>
+          <p style="margin-top: 8px; color: #555;">Erfolgreich: <strong>${child.heute_erfolg}</strong> von ${child.heute_gesamt}</p>
+
+          ${child.heute_fail_total > 0 ? `
+            <hr style="border: 0; border-top: 1px dashed #c1d5f8; margin: 12px 0;">
+            <p style="color: #1e40af; font-size: 0.95em; margin: 0;">
+              Ohne Seife: <strong>${child.heute_fail_no_soap}</strong> von ${child.heute_fail_total} Fehlversuchen
+            </p>
+          ` : ''}
+
+        </div>
+      </div>
+
+      <div id="weekViewDetail" class="hidden">
+        <div class="week-box" style="background: #f0fdf4; border-left: 4px solid #22c55e;">
+          <strong style="color: #166534;">📊 Diese Woche:</strong><br>
+          <span>Quote: <strong>${child.percent}%</strong> | <strong>${child.woche_erfolg}x</strong> fehlerfrei</span>
+
+          ${child.woche_fail_total > 0 ? `
+            <div style="margin-top: 8px; font-size: 0.9em; color: #1e40af;">
+              Ohne Seife: <strong>${child.woche_fail_no_soap}</strong> von ${child.woche_fail_total} Fehlversuchen
+            </div>
+          ` : ''}
+
+        </div>
+        <div class="week-box" style="background: #eff6ff; border-left: 4px solid #3b82f6;">
+          <strong style="color: #1e40af;">👑 Lifetime:</strong><br>
+          <span>Gesamt: <strong>${child.lifetime_erfolg}x</strong> fehlerfrei</span>
+        </div>
+      </div>
     </div>
   `;
 
   modal.classList.remove("hidden");
+}
 
-  modal.onclick = (e) => {
-    if (e.target === modal) {
-      modal.classList.add("hidden");
-    }
-  };
+function closeChildDetailModal() {
+  document.getElementById("childDetailModal").classList.add("hidden");
+}
+
+function toggleDetailView(view) {
+  const todayV = document.getElementById('todayViewDetail');
+  const weekV = document.getElementById('weekViewDetail');
+  const todayB = document.getElementById('todayBtnDetail');
+  const weekB = document.getElementById('weekBtnDetail');
+
+  if(view === 'today') {
+    todayV.classList.remove('hidden');
+    weekV.classList.add('hidden');
+    todayB.classList.add('active-toggle');
+    weekB.classList.remove('active-toggle');
+  } else {
+    weekV.classList.remove('hidden');
+    todayV.classList.add('hidden');
+    weekB.classList.add('active-toggle');
+    todayB.classList.remove('active-toggle');
+  }
 }
 
 // ==========================================
@@ -512,13 +631,33 @@ function renderLiveActivities(activities) {
 
   activities.forEach(act => {
     const timeText = timeAgo(act.time);
-    const isSuccess = parseInt(act.erfolg) === 1;
     
-    const text = isSuccess ? "hat die Hände korrekt gewaschen" : "hat das Händewaschen nicht richtig beendet";
+    // Wasser und Seife mit auslesen
+    const isSuccess = parseInt(act.erfolg) === 1;
+    const hatWasser = parseInt(act.wasser) === 1;
+    const hatSeife = parseInt(act.seife) === 1;
+    
+    let text = "";
+    if (isSuccess) {
+      text = "hat die Hände korrekt gewaschen";
+    } else {
+      // Fehler genau aufschlüsseln
+      if (!hatWasser && !hatSeife) {
+        text = "hat <strong>KEIN Wasser</strong> und <strong>KEINE Seife</strong> benutzt";
+      } else if (hatWasser && !hatSeife) {
+        text = "hat Wasser, aber <strong>KEINE Seife</strong> benutzt";
+      } else if (!hatWasser && hatSeife) {
+        text = "hat Seife, aber <strong>KEIN Wasser</strong> benutzt";
+      } else {
+        text = "hat das Händewaschen nicht richtig beendet"; 
+      }
+    }
+    
     const iconBg = isSuccess ? "#dcfce7" : "#fee2e2"; 
+    const itemClass = isSuccess ? "activity-item" : "activity-item failed";
 
     list.innerHTML += `
-      <div class="activity-item">
+      <div class="${itemClass}" style="cursor: pointer;" onclick="openModalFromName('${act.name}')">
         <div class="activity-icon" style="background-color: ${iconBg};">${act.emoji}</div>
         <div class="activity-info">
           <p class="activity-fulltext"><strong>${act.name}</strong> ${text}</p>
@@ -564,4 +703,107 @@ document.addEventListener("DOMContentLoaded", () => {
       todayBtn.classList.remove("active-toggle");
     });
   }
+});
+
+// ==========================================
+// 7. CHART.JS DIAGRAMM (VERLAUF)
+// ==========================================
+
+let myBarChart = null;
+
+function initBarChart() {
+  const ctx = document.getElementById('myBarChart');
+  if (!ctx) return;
+
+  const labels = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+  myBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Erfolgreich',
+          data: [0, 0, 0, 0, 0, 0, 0], 
+          backgroundColor: '#B4DDFC', 
+          borderRadius: 6
+        },
+        {
+          label: 'Nicht korrekt',
+          data: [0, 0, 0, 0, 0, 0, 0], 
+          backgroundColor: '#eaf4ff', 
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true, 
+          ticks: { color: '#888' },
+          grid: { display: false },
+          border: { display: false }
+        },
+        y: { 
+          stacked: true, 
+          beginAtZero: true,
+          ticks: { stepSize: 1, color: '#888' },
+          grid: { color: '#f2f2f2' },
+          border: { display: false }
+        }
+      },
+      plugins: {
+        legend: { 
+          display: true, 
+          position: 'bottom',
+          labels: { usePointStyle: true, boxWidth: 8, font: {size: 11} }
+        },
+        tooltip: {
+          backgroundColor: '#3f51b5',
+          padding: 10,
+          borderRadius: 10
+        }
+      }
+    }
+  });
+}
+
+function populateChartDropdown(members) {
+  const selector = document.getElementById('chartUserSelector');
+  if (!selector) return;
+
+  selector.innerHTML = '<option value="family">Familie gesamt</option>';
+
+  members.forEach(m => {
+    if (m.role === 'Kind') {
+      const opt = document.createElement('option');
+      opt.value = m.id;
+      const emojiText = m.emoji.includes('<img') ? '👤' : m.emoji; 
+      opt.innerHTML = m.name; 
+      selector.appendChild(opt);
+    }
+  });
+}
+
+function updateChartData() {
+  const selector = document.getElementById('chartUserSelector');
+  if (!myBarChart || !selector || !window.chartData) return;
+
+  const selectedVal = selector.value;
+  const dataForUser = window.chartData[selectedVal];
+
+  if (dataForUser) {
+    myBarChart.data.datasets[0].data = dataForUser.success;
+    myBarChart.data.datasets[1].data = dataForUser.fail;
+  } else {
+    myBarChart.data.datasets[0].data = [0,0,0,0,0,0,0];
+    myBarChart.data.datasets[1].data = [0,0,0,0,0,0,0];
+  }
+
+  myBarChart.update();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initBarChart();
 });

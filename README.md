@@ -26,7 +26,7 @@ Dadurch werden Eltern entlastet, die Hygiene im Alltag verbessert und das Risiko
 *In diesem Teil werden die gemeinsamen Schritte aus der UX-Abgabe dokumentiert, damit sich hier alles vollständig an einem Ort befindet (betrifft WebApp und Physical Computing)*
 
 * **Figma:** [https://www.figma.com/design/Nw53NZoeG5OGm27H7JYsSu/IM-4-%E2%80%93-App-Konzeption-Vorlage--Copy-?node-id=78-325&t=YUNeZCm5Ir8smF02-1]
-* **User Flow \+ Screen Flow** (im4_washy\resources\assets\userflow.png) 
+* **User Flow \+ Screen Flow** !(im4_washy/Physical Computing/IM4_washy_Userflow.png)
 * ggf. weitere Ergänzungen
 * *Welche Features waren angedacht?*
 * *Welche Features wurden nicht umgesetzt? (Warum)*
