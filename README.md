@@ -31,6 +31,14 @@ Dadurch werden Eltern entlastet, die Hygiene im Alltag verbessert und das Risiko
 * *Welche Features waren angedacht?*
 * *Welche Features wurden nicht umgesetzt? (Warum)*
 
+Welche Features wurden nicht umgesetzt? (Warum)
+
+Tier-Profilbilder: Ursprünglich war geplant, KI-generierte Tier-Bilder als Profilbilder für die Kinder zu verwenden. Aus Komplexitäts- und Zeitgründen haben wir uns jedoch dagegen entschieden, um den Fokus auf die Kernfunktionen zu legen.
+
+Erweiterte Awards-Seite: Wir hatten angedacht, die Seite mit den Auszeichnungen noch ausführlicher und interaktiver zu gestalten.
+
+Trotz dieser Kürzungen sind wir mit dem aktuellen, runden Endergebnis sehr zufrieden, da der Hauptzweck der App voll erfüllt wird.
+
 ### Setup
 
 * **WebApp:** [https://im4washy.laraeberhard.ch/login.html]
@@ -163,6 +171,9 @@ Unter Familie Kind hinzufügen — danach erscheint ein Popup das auffordert, da
 Armband 5 Sekunden auf den NFC-Reader halten → Ring leuchtet blau als Bestätigung
 Ab jetzt kann das Kind durch Draufhalten des Armbands einen Waschgang starten
 
+8. Übersicht
+Eltern können jetzt die Waschvorgänge nachträglich anschauen und so je nachdem auf das Waschverhalten der Kinder reagieren. Durch ein Awardsystem sind die Kinder motiviert auch wirklich ihre Hände richtig zu waschen, so dass sie wie ihre Leistungen auch bildlich vor sich haben.
+
 #### Bauanleitung Physical Computing
 
 * ***Was muss ich wie bauen, verbinden, installieren?***  
@@ -177,6 +188,8 @@ Ab jetzt kann das Kind durch Draufhalten des Armbands einen Waschgang starten
 
 ## technische Details
 
+SIEHE Physical Computing/Reproduzierbarkeit aka Anleitung!
+
 // Hier sollte das Verständnis ersichtlich sein / Wie stehen die Dateien in Beziehung zueinander, Wie reden Die Dateien miteinander, Wie ist der Weg der Daten
 
 * **Projektstruktur / Code-Struktur:** \[*Hinweis: Der Code selbst muss im Repository liegen und im Kopfbereich jeder Datei eine kurze Zusammenfassung enthalten.*\]  
@@ -187,6 +200,7 @@ Ab jetzt kann das Kind durch Draufhalten des Armbands einen Waschgang starten
 ## Known bugs
 
 * Was funktioniert noch nicht einwandfrei?  
+Abbruch der NFC-Kopplung: Wenn man den Prozess abbricht, während man ein neu erstelltes Kind mit einem NFC-Armband verbinden möchte, wird das Profil des Kindes nicht automatisch gelöscht. Es bleibt als "Kind" ohne verknüpftes Armband in der Datenbank bestehen und muss derzeit manuell wieder gelöscht werden.
 * Was ist uns aufgefallen bei der Entwicklung?  
 * Was könnte noch verbessert werden?
 Zusätzlich könnte beim WC ein Gewichts- oder Spülsensor angebracht werden, um zu erfassen, wie oft die Toilette benutzt wurde. Aktuell wird lediglich das Händewaschen getrackt, ohne dass klar ist, ob zuvor ein Toilettengang stattgefunden hat. Durch die Kombination der WC-Daten mit den Daten zum Händewaschen liesse sich besser abschätzen, ob ein Kind nach dem Toilettengang die Hände gewaschen hat. Gleichzeitig könnten Händewaschgänge vor dem Essen besser eingeordnet werden: Wenn kein Toilettengang registriert wurde, aber ein Händewaschvorgang stattfindet, spricht dies eher dafür, dass das Händewaschen im Zusammenhang mit der Essenshygiene steht. Dadurch würden die erhobenen Daten aussagekräftiger und besser interpretierbar.
@@ -196,6 +210,13 @@ Ein weiteres Problem besteht darin, dass keine Händewaschdaten erfasst werden, 
 ## Umsetzungsprozess
 
 * **Reflexion / Erfahrung / Lernfortschritt:** *Was haben wir gelernt? Würden wir es nochmal genauso machen? Was war gut, was war schlecht?*  
+Reflexion / Erfahrung / Lernfortschritt: Die Kombination aus WebApp und Physical Computing brachte einige Herausforderungen mit sich. Beim Testen war oft unklar, ob ein Fehler am Code oder an defekter Hardware lag. Ein kurioses Beispiel: Unser Regensensor ist im Laufe der Zeit ironischerweise angerostet und hat daraufhin nicht mehr funktioniert.
+
+Beim Coden der WebApp lief es hingegen sehr gut. Im Vergleich zum Projekt aus dem vorherigen Semester war unser Code dieses Mal viel verständlicher und übersichtlicher. Wir wussten meist genau, wo ein Problem liegen könnte, was eine sehr effiziente Fehlersuche ermöglichte.
+
+Ein wichtiges Learning für die Zukunft: Wir würden die verschiedenen Seiten (insbesondere die Hauptseite) technologisch besser aufteilen. Da wir teilweise an der gleichen Hauptseite arbeiten mussten, kam es zu Engpässen. Sobald Nebenseiten wie der Login fertig waren, konnte man nicht parallel an der Hauptseite weiterarbeiten, was den Prozess etwas verlangsamte.
+
+
 * **Herausforderungen & Lösungen:** \[*Verworfene Ansätze, Fehler, Umplanungen*\]  
 Zu Beginn war geplant, nur ein einzelnes Gerät zu entwickeln, bei dem die Armbänder der Kinder registriert werden können. Während der Entwicklung wurde jedoch klar, dass bei mehreren Geräten im Einsatz, beispielsweise wenn das Produkt später auf den Markt kommen würde und mehrere Familien ein solches Gerät nutzen würden, würde ein grosses Problem entstehen:
 
@@ -205,5 +226,9 @@ Eine weitere Schwierigkeit war die Registrierung der Armbänder. Der Scanner mus
 
 Deshalb musste das System angepasst werden, damit zwischen „Registrierungsmodus“ und „normalem Waschvorgang“ klar unterschieden werden kann.
 
-* **KI-Einsatz:** *Claude, Gemini. ChatGPT und deren Nutzen*  
+* **KI-Einsatz:** *Claude, Gemini. ChatGPT und deren Nutzen* 
+KI-Einsatz: Wir haben KI-Tools (ChatGPT, Claude, Gemini) sehr gezielt eingesetzt. Hauptsächlich haben wir sie zur Code-Generierung genutzt, dabei haben wir stets darauf geachtet, genau zu beschreiben, was wir brauchen, und uns den generierten Code Schritt für Schritt erklären lassen. Auch bei der Fehlersuche, wenn uns die Konsolen-Fehlermeldungen nicht weiterbrachten, war die KI eine grosse Hilfe. Für die Textformulierung und Korrektur dieser Dokumentation haben wir hauptsächlich Gemini verwendet.
+
+
 * **Fazit:** …
+Fazit: Allgemein sind wir extrem zufrieden und sehr stolz auf das Endergebnis! :) Hätte man uns zu Beginn des Projekts gesagt, dass am Ende wirklich alles (sowohl Hardware als auch Software) reibungslos zusammenfunktioniert und wir auch mehr oder weniger genau verstehen, was wir da eigentlich programmiert haben, hätten wir das wahrscheinlich nicht geglaubt. Auch auf das Design und die bewegenden Bubbles im Hintergrund sind wir sehr stolz!
