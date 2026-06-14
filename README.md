@@ -27,6 +27,7 @@ Dadurch werden Eltern entlastet, die Hygiene im Alltag verbessert und das Risiko
 
 * **Figma:** [https://www.figma.com/design/Nw53NZoeG5OGm27H7JYsSu/IM-4-%E2%80%93-App-Konzeption-Vorlage--Copy-?node-id=78-325&t=YUNeZCm5Ir8smF02-1]
 * **User Flow \+ Screen Flow** !(im4_washy/Physical Computing/IM4_washy_Userflow.png)
+im4_washy/Physical Computing/IM4_washy_ScreenFlow.png
 * ggf. weitere Ergänzungen
 * *Welche Features waren angedacht?*
 * *Welche Features wurden nicht umgesetzt? (Warum)*
@@ -42,7 +43,7 @@ Trotz dieser Kürzungen sind wir mit dem aktuellen, runden Endergebnis sehr zufr
 ### Setup
 
 * **WebApp:** [https://im4washy.laraeberhard.ch/login.html]
-* **Video-Dokumentation:** [Link zum Video auf Youtube](http://link.zum.video) 
+* **Video-Dokumentation:** [Link zum Video auf Youtube](https://youtu.be/BYgwb7w-YTw) 
 
 #### Installationsanleitung WebApp
 
@@ -185,6 +186,9 @@ Eltern können jetzt die Waschvorgänge nachträglich anschauen und so je nachde
 * *ergänze: **Steckplan** (betrifft Physical Computing, vgl. Slides Kapitel 15): generiert z.B. mit Fritzing (empfohlen), Tinkercad, Wokwi*  
   * *beachtet die [Fritzing Parts](https://github.com/Interaktive-Medien/im_physical_computing/tree/main/15_Intro_Projektdoku) extra für euch*  
 * *ggf. **Bildmaterial***
+
+* SIEHE Physical Computing/Reproduzierbarkeit aka Anleitung!
+und Physical Computing Ordner
 
 ## technische Details
 
